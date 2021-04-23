@@ -1,9 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Intellij
+/.gitignore
+/.eslintrc.js
+antares.iml
+/.idea
+
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
+/package-lock.json
+/yarn.lock
 
 # testing
 /coverage
