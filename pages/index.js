@@ -1,9 +1,17 @@
-import Head from 'next/head'
+import React from "react";
+import Link from "next/link";
 
-export default function Home() {
+const Index = () => {
   return (
-    <div>
-      <p1>Home</p1>
+    <div className="index">
+      <Link href="/chat">
+        <a>Navigate to chat</a>
+      </Link>
+      <Link href="/server-sent-events">
+        <a>Navigate to sse</a>
+      </Link>
     </div>
   )
 }
+
+export default Index;
