@@ -1,18 +1,11 @@
 import React from 'react';
 import { hasCookie } from 'cookies-next';
-import PropTypes from 'prop-types';
-import Layout from '../components/layout';
 
-function Home({ isLoggedIn }) {
+function Home() {
   return (
-    <Layout isLoggedIn={isLoggedIn} />
+    <div>Home Page</div>
   );
 }
-
-Home.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  test: PropTypes.string,
-};
 
 export const getServerSideProps = async ({ req, res }) => ({
   props:
