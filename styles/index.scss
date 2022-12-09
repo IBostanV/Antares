@@ -1,1 +1,64 @@
 @import "~bootstrap/scss/bootstrap";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#__next {
+  height: 100%;
+}
+
+.background {
+  background-color: #21252f;
+  height: 100%;
+  position: relative;
+}
+
+.index {
+  background-color: #21252a;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  z-index: 1;
+  box-shadow: black 0 0 8px;
+  backdrop-filter: blur(22px);
+}
+
+.z-index-one {
+  z-index: 1;
+}
+
+.login-form {
+  border-radius: 13px;
+  padding: 30px 25px 45px;
+  width: 20%;
+  overflow: hidden;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #FFF;
+  ul {
+    list-style-type: none;
+  }
+}
+
+main {
+  background-color: #21252f;
+  box-shadow: black 3px 15px 45px;
+}
+
+.login-input {
+  border-color: transparent;
+  background-color: #e8f0fe;
+  padding: 7px;
+  &:focus-visible {
+    outline: none !important;
+  }
+}
