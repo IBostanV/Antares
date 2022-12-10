@@ -4,6 +4,7 @@ import {
   Button, Col, Container, Row,
 } from 'react-bootstrap';
 import { authenticate, LOGIN_URL } from '../../api/authentication';
+import { validateEmail } from '../../utils/validation';
 
 function Login() {
   const router = useRouter();
@@ -11,6 +12,9 @@ function Login() {
   const [password, setPassword] = useState('');
 
   const onSubmit = () => {
+    if (!validateEmail(email)) {
+      throw Error("Validation error. Invalid email address");
+    }
     authenticate(LOGIN_URL, { email, password })
       .then(() => router.push('/'));
   };
