@@ -14,4 +14,16 @@ UI for the Play-Quiz Application
     <li>props from <i>getServerSideProps()</i> in <b>index.jsx</b> are used as <i>pageProps</i> in <b>_app.jsx</b></li>
 </ul>
 
-    
+
+#For Next.js redirects use the following snippet in next.config.js:
+```
+async redirects() {
+return [
+{
+    source: '/',
+    destination: '/home',
+    permanent: true,
+    },
+    ]
+}
+```

@@ -5,7 +5,7 @@ function ServerSentEventsClient() {
 
   useEffect(() => {
     let eventSource = null;
-    eventSource = new EventSource(`${process.env.NEXT_PUBLIC_BE_HOST_URL}/sse`); // eslint-disable-line
+    eventSource = new EventSource(`${process.env.NEXT_PUBLIC_BE_HOST_URL}/api/chat/sse`); // eslint-disable-line
 
     eventSource.addEventListener('StringList', (event) => {
       setResultData(event.data);

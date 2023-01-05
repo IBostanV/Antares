@@ -1,15 +1,7 @@
-import axios from 'axios';
 import { setCookie } from 'cookies-next';
-import Qs from 'qs';
+import request, { POST } from '../../utils/request';
 
-const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BE_HOST_URL,
-  paramsSerializer: {
-    serialize: (params) => Qs.stringify(params, { arrayFormat: 'brackets' }),
-  },
-});
-
-const authenticate = (url, body) => axiosInstance.post(url, body)
+const authenticate = (url, body) => request(url, {body, method: POST, withHeaders: true})
   .then((response) => {
     const { authorization } = response.headers;
     setCookie('authorization', authorization);
