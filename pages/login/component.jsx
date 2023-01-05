@@ -13,10 +13,9 @@ function Login() {
 
   const onSubmit = () => {
     if (!validateEmail(email)) {
-      throw Error("Validation error. Invalid email address");
+      throw Error('Validation error. Invalid email address');
     }
-    authenticate(LOGIN_URL, { email, password })
-      .then(() => router.push('/'));
+    authenticate(LOGIN_URL, { email, password }).then(() => router.push('/'));
   };
 
   return (

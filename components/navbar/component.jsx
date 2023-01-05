@@ -15,8 +15,11 @@ function Navbar({ isLoggedIn }) {
 
   return (
     <div className="index">
+      <Link href="/">
+        <Button>Home</Button>
+      </Link>
       <Link href="/sse">
-        <Button>Navigate to sse</Button>
+        <Button>SSE</Button>
       </Link>
       {!isLoggedIn && (
         <>

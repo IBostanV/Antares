@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Qs from 'qs';
+import { getCookie, hasCookie } from 'cookies-next';
 
 export const POST = 'post';
 export const GET = 'get';
@@ -7,8 +8,9 @@ export const DELETE = 'delete';
 export const PUT = 'put';
 export const PATCH = 'patch';
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BE_HOST_URL,
+  withCredentials: true,
   paramsSerializer: {
     serialize: (params) => Qs.stringify(params, { arrayFormat: 'brackets' }),
   },
@@ -19,8 +21,13 @@ export default (url, requestOptions = {}) => {
     url,
     method: GET,
     headers: {},
+    withHeaders: false,
     ...requestOptions,
   };
+
+  if (hasCookie('authorization')) {
+    options.headers.Authorization = `Bearer ${getCookie('authorization')}`;
+  }
 
   let request;
 
@@ -35,8 +42,7 @@ export default (url, requestOptions = {}) => {
       break;
   }
 
-  return request
-    .then((response) => response.data || response)
+  return request.then((response) => (requestOptions.withHeaders) ? response : response.data || response)
     .catch(({ response }) => {
       const { error } = response.data;
 

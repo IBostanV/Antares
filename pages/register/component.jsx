@@ -12,12 +12,9 @@ function Register() {
   const [password, setPassword] = useState('');
 
   const onSubmit = () => {
-    if (password !== repass) {
-      console.log('Incorrect credentials!');
+    if (password === repass) {
+      authenticate(REGISTER_URL, { email, password }).then(() => router.push('/'));
     }
-
-    authenticate(REGISTER_URL, { email, password })
-      .then(() => router.push('/'));
   };
 
   return (
