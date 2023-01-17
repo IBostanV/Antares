@@ -8,6 +8,18 @@ body {
   overflow-x: hidden;
 }
 
+p {
+  color: #FFF;
+}
+
+span {
+  color: #FFF;
+}
+
+div {
+  color: #FFF;
+}
+
 #__next {
   height: 100%;
 }
@@ -33,6 +45,9 @@ body {
 }
 
 .z-index-one {
+  background-color: #000;
+  margin: 20px;
+  padding: 10px;
   z-index: 1;
 }
 

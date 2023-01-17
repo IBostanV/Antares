@@ -42,23 +42,17 @@ export default (url, requestOptions = {}) => {
       break;
   }
 
-  return request.then((response) => (requestOptions.withHeaders) ? response : response.data || response)
+  return request.then((response) => ((requestOptions.withHeaders) ? response : response.data || response))
     .catch(({ response }) => {
-      const { error } = response.data;
-
-      if (error && error.message) {
-        console.log(error.message);
-      }
-
       switch (response.status) {
         case 403:
-          console.log(error.message);
-          break;
         case 500:
-          console.log(error.message);
+          console.log(response.data);
           break;
         default:
+          console.log(response.data);
           break;
       }
     });
 };
+
