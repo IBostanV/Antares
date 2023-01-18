@@ -1,16 +1,15 @@
 import React from 'react';
-import { deleteCookie } from 'cookies-next';
 import Link from 'next/link';
 import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import { logout } from '../../api/authentication';
 
 function Navbar({ isLoggedIn }) {
   const router = useRouter();
 
-  const logout = () => {
-    deleteCookie('authorization');
-    router.push('/');
+  const signOut = () => {
+    logout().then(() => router.push('/'));
   };
 
   return (
@@ -20,6 +19,9 @@ function Navbar({ isLoggedIn }) {
       </Link>
       <Link href="/sse">
         <Button>SSE</Button>
+      </Link>
+      <Link href="/admin/glossary">
+        <Button>Glossary</Button>
       </Link>
       {!isLoggedIn && (
         <>
@@ -34,7 +36,7 @@ function Navbar({ isLoggedIn }) {
         </>
       )}
       {isLoggedIn && (
-        <Button onClick={logout}>Logout</Button>
+        <Button onClick={signOut}>Sign out</Button>
       )}
     </div>
   );
