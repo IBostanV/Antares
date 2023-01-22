@@ -1,6 +1,8 @@
 import request, { POST } from '../../utils/request';
-import { LOGOUT_URL } from './index';
+import { CSRF_TOKEN_URL, LOGOUT_URL } from './index';
 
-const logout = () => request(LOGOUT_URL, { method: POST });
+const logout = () => request(CSRF_TOKEN_URL)
+  .then(() => request(LOGOUT_URL, { method: POST }));
+
 
 export default logout;
