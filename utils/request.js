@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Qs from 'qs';
 import { getCookie, hasCookie } from 'cookies-next';
+import { CSRF_TOKEN_URL } from '../api/authentication';
 
 export const POST = 'post';
 export const GET = 'get';
@@ -17,17 +18,23 @@ export const axiosInstance = axios.create({
 });
 
 export default (url, requestOptions = {}) => {
+  if ([POST, PATCH, PUT].includes(requestOptions.method)) {
+    return axiosRequest(CSRF_TOKEN_URL)
+      .then(() => axiosRequest(url, requestOptions));
+  }
+  return axiosRequest(url, requestOptions);
+};
+
+const axiosRequest = (url, requestOptions = {}) => {
   const options = {
     url,
     method: GET,
-    headers: {},
+    headers: {
+      ...(hasCookie('authorization') ? {'Authorization' : `Bearer ${getCookie('authorization')}`} : undefined)
+    },
     withHeaders: false,
     ...requestOptions,
   };
-
-  if (hasCookie('authorization')) {
-    options.headers.Authorization = `Bearer ${getCookie('authorization')}`;
-  }
 
   let request;
 
