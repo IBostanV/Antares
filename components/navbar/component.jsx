@@ -20,8 +20,8 @@ function Navbar({ isLoggedIn }) {
       <Link href="/sse">
         <Button>SSE</Button>
       </Link>
-      <Link href="/admin/glossary">
-        <Button>Glossary</Button>
+      <Link href="/admin">
+        <Button>Admin</Button>
       </Link>
       {!isLoggedIn && (
         <>
