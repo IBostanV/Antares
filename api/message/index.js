@@ -1,1 +1,1 @@
-export { default as fetchMessages } from './fetch-messages';
+export { default } from './fetch-messages';

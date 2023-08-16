@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SockJsClient from 'react-stomp';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { fetchMessages } from '../../api/message';
+import fetchMessages from '../../api/message';
 
 function Message({ hostUrl }) {
   const [input, setInput] = useState('');
@@ -26,7 +26,7 @@ function Message({ hostUrl }) {
       if (response) setMessages(response);
     };
     fetchData();
-  }
+  };
 
   return (
     <>
@@ -45,7 +45,7 @@ function Message({ hostUrl }) {
         messages.map((item) => (
           <div key={item.message}>
             <p>
-              {item.createdDate + ' ' + item.source + ' ' + item.content}
+              {`${item.createdDate} ${item.source} ${item.content}`}
             </p>
           </div>
         ))

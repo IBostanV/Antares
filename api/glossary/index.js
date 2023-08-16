@@ -1,3 +1,2 @@
-export { default as getGlossaryById } from './getById';
-
-export const GLOSSARY_PATH = '/api/glossary';
+export { default as getGlossaryById } from './get-by-id';
+export { default as toggleGlossary } from './toggle';

@@ -3,7 +3,8 @@ import {
   Button, Col, Container, Row,
 } from 'react-bootstrap';
 import { useRouter } from 'next/router';
-import { authenticate, REGISTER_URL } from '../../api/authentication';
+import { authenticate } from '../../api/authentication';
+import {REGISTER_URL} from "../../api/constant";
 
 function Register() {
   const router = useRouter();

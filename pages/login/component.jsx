@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import {
   Button, Col, Container, Row,
 } from 'react-bootstrap';
-import { authenticate, LOGIN_URL } from '../../api/authentication';
-import { validateEmail } from '../../utils/validation';
+import { LOGIN_URL } from '../../api/constant';
+import validateEmail from '../../utils/validation';
+import {authenticate} from "../../api/authentication";
 
 function Login() {
   const router = useRouter();
