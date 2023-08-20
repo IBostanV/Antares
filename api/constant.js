@@ -11,3 +11,5 @@ export const CATEGORY_PATH = API + '/category';
 export const GLOSSARY_PATH = API + '/glossary';
 
 export const QUESTION_PATH = API + '/question';
+
+export const QUIZ_PATH = API + '/quiz';

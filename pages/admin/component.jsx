@@ -2,6 +2,7 @@ import React from 'react';
 import Glossary from './glossary';
 import Category from './category';
 import Question from './question';
+import GlossaryType from "./glossary-type";
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
 
 function Admin() {
@@ -11,21 +12,25 @@ function Admin() {
                 <Col sm={3}>
                     <Nav variant="pills" className="flex-column">
                         <Nav.Item>
-                            <Nav.Link eventKey="first">Glossaries</Nav.Link>
+                            <Nav.Link eventKey="first">Categories</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="second">Categories</Nav.Link>
+                            <Nav.Link eventKey="second">Glossaries</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="third">Questions</Nav.Link>
+                            <Nav.Link eventKey="third">Glossary Type</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="fourth">Questions</Nav.Link>
                         </Nav.Item>
                     </Nav>
                 </Col>
                 <Col sm={9}>
                     <Tab.Content>
-                        <Tab.Pane eventKey="first">{(<Glossary/>)}</Tab.Pane>
-                        <Tab.Pane eventKey="second">{(<Category/>)}</Tab.Pane>
-                        <Tab.Pane eventKey="third">{(<Question/>)}</Tab.Pane>
+                        <Tab.Pane eventKey="first">{(<Category/>)}</Tab.Pane>
+                        <Tab.Pane eventKey="second">{(<Glossary/>)}</Tab.Pane>
+                        <Tab.Pane eventKey="third">{(<GlossaryType/>)}</Tab.Pane>
+                        <Tab.Pane eventKey="fourth">{(<Question/>)}</Tab.Pane>
                     </Tab.Content>
                 </Col>
             </Row>

@@ -8,6 +8,7 @@ import getQuestionLanguages from "../../../api/question/get-languages";
 import saveQuestion from "../../../api/question/save";
 import getQuestions from "../../../api/question/get-all";
 import getByCategoryGlossaries from "../../../api/glossary/get-all";
+import {value} from "lodash/seq";
 
 export default function Glossary() {
     const [types, setTypes] = useState([]);
@@ -23,7 +24,7 @@ export default function Glossary() {
     const [isActive, setIsActive] = useState(false);
     const [complexityLevel, setComplexityLevel] = useState(1);
     const [content, setContent] = useState('');
-    const [category, setCategory] = useState();
+    const [category, setCategory] = useState({catId: 1});
     const [attributes, setAttributes] = useState([]);
     const [answer, setAnswer] = useState('');
     const [translations, setTranslations] = useState({});
@@ -36,7 +37,10 @@ export default function Glossary() {
             return await getQuestionTypes();
         }
 
-        fetchQuestionTypes().then(values => setTypes(values));
+        fetchQuestionTypes().then(values => {
+            setTypes(values);
+            setType(values?.[0]);
+        });
     }, []);
 
     useEffect(() => {
@@ -54,7 +58,7 @@ export default function Glossary() {
 
         fetchQuestionAttributes().then(values => {
             setAttributesSet(values);
-            setAttributes(values[0]);
+            setAttributes(values?.[0]);
         });
     }, []);
 
@@ -64,6 +68,7 @@ export default function Glossary() {
         };
         fetchCategories().then((categories) => {
             setCategories(categories);
+            setCategory(categories?.[0]);
         });
     }, []);
 
@@ -79,12 +84,12 @@ export default function Glossary() {
 
     useEffect(() => {
         const fetchGlossaries = async () => {
-            return await getByCategoryGlossaries(category || 1);
+            return await getByCategoryGlossaries(category.catId || 1);
         }
 
         fetchGlossaries().then(glossaries => {
             setGlossaries(glossaries);
-            setGlossary(glossaries[0]);
+            setGlossary(glossaries?.[0]);
         })
     }, [category]);
 
@@ -109,7 +114,7 @@ export default function Glossary() {
     }
 
     const handleCategory = (event) => {
-        setCategory(event.target.value);
+        setCategory({catId: event.target.value});
     }
 
     const handleAttributes = (event) => {
@@ -123,7 +128,7 @@ export default function Glossary() {
     }
 
     const handleGlossary = (event) => {
-        setGlossary(event.target.value);
+        setGlossary({termId: event.target.value});
     }
 
     const handleTranslation = (event, langId) => {
@@ -148,15 +153,15 @@ export default function Glossary() {
             {
                 topic,
                 type,
-                answers: [{content: answer || answerByGlossary, glossary}],
+                answers: [{content: answer || (answerByGlossary || null), glossary}],
                 content,
                 priority,
                 isActive,
+                category,
                 complexityLevel,
                 attributes: [attributes],
                 translations: translationEntries.map(e => ({description: e[1], language: {langId: e[0]}})),
-                answerTranslations: answerEntries.map(e => ({description: e[1], language: {langId: e[0]}})),
-                category: {catId: category}
+                answerTranslations: answerEntries.map(e => ({description: e[1], language: {langId: e[0]}}))
             });
 
         if (response) {
@@ -253,9 +258,9 @@ export default function Glossary() {
                     <Form.Label column sm={1} className={'text-end'}>By Glossary</Form.Label>
                     <Col sm={3}>
                         <Form.Select aria-label="Answer" onChange={handleGlossary}>
+                            <option value={null} key={null}></option>
                             {glossaries?.map(glossary => (
-                                <option value={glossary.termId}
-                                        key={glossary.id}>{handleAttributeChange(glossary)}</option>
+                                <option value={glossary.termId} key={glossary.termId}>{handleAttributeChange(glossary)}</option>
                             ))}
                         </Form.Select>
                     </Col>
@@ -368,7 +373,7 @@ export default function Glossary() {
                             <td>{question.content}</td>
                             <td>{question.category?.name}</td>
                             <td>{question.attributes?.map(attribute => (
-                                <div key={attribute.name}>{attribute}</div>
+                                <div key={attribute}>{attribute}</div>
                             ))}
                             </td>
                             <td>
