@@ -1,22 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import getCategories from '../../../api/category/get-all';
-import {saveCategory} from "../../../api/category";
 import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
+import getGlossaryTypes from "../../../api/glossary/get-types";
+import saveGlossaryType from "../../../api/glossary/save-type";
 
-function Category() {
-    const [categories, setCategories] = useState([]);
+function GlossaryType() {
+    const [glossaryTypes, setGlossaryTypes] = useState([]);
 
     const [name, setName] = useState('');
-    const [parent, setParent] = useState();
-    const [visible, setVisible] = useState(true);
+    const [options, setOptions] = useState();
+    const [isActive, setIsActive] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
-            return await getCategories();
+            return await getGlossaryTypes();
         };
 
-        fetchData().then((result) => setCategories(result));
+        fetchData().then((result) => setGlossaryTypes(result));
     }, []);
 
 
@@ -24,20 +24,19 @@ function Category() {
         setName(event.target.value);
     }
 
-    const handleSubcategory = (event) => {
-        const category = JSON.parse(event.target.value);
-        setParent({catId: category.catId, name: category.name});
+    const handleOptions = (event) => {
+        setOptions(event.target.value);
+    }
+
+    const handleIsActive = (event) => {
+        setIsActive(event.target.checked);
     }
 
     const submit = async () => {
-        const response = await saveCategory({name, parent, visible});
+        const response = await saveGlossaryType({name, options, isActive});
         if (response) {
-            setCategories([...categories, response.data]);
+            setGlossaryTypes([...glossaryTypes, response.data]);
         }
-    }
-
-    const handleVisible = (event) => {
-        setVisible(event.target.checked);
     }
 
     return (
@@ -47,20 +46,20 @@ function Category() {
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Sub Category</th>
-                        <th>Visible</th>
+                        <th>Options</th>
+                        <th>Is Active</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {categories?.map(item => (
-                        <tr key={item.catId}>
+                    {glossaryTypes?.map(item => (
+                        <tr key={item.name}>
                             <td>{item.name}</td>
-                            <td>{item?.parent?.name}</td>
+                            <td>{item.options}</td>
                             <td>
                                 <Form.Check
                                     type={'checkbox'}
                                     id={`default-checkbox`}
-                                    defaultChecked={item.visible}
+                                    defaultChecked={isActive}
                                 />
                             </td>
                         </tr>
@@ -69,7 +68,7 @@ function Category() {
                 </Table>
             </div>
             <Form className={'col-9'}>
-                <h3 className={'text-center'}>Categories</h3>
+                <h3 className={'text-center'}>Glossary Types</h3>
                 <hr/>
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Name</Form.Label>
@@ -85,25 +84,26 @@ function Category() {
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3} className={'text-end'}>Sub-category</Form.Label>
+                    <Form.Label column sm={3} className={'text-end'}>Options</Form.Label>
                     <Col sm={8}>
-                        <Form.Select aria-label="Sub-category" onChange={handleSubcategory}>
-                            <option value={null}></option>
-                            {categories?.map(item => (
-                                <option value={JSON.stringify(item)} key={item.catId}>{item.name}</option>
-                            ))}
-                        </Form.Select>
+                        <Form.Control
+                            placeholder="Options"
+                            aria-label="Options"
+                            aria-describedby="basic-addon1"
+                            onChange={handleOptions}
+                            value={options}
+                        />
                     </Col>
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3} className={'text-end'}>Visible</Form.Label>
+                    <Form.Label column sm={3} className={'text-end'}>Is Active</Form.Label>
                     <Col sm={8}>
                         <Form.Check
                             type={'checkbox'}
                             id={`visible`}
-                            onChange={handleVisible}
-                            checked={visible}
+                            onChange={handleIsActive}
+                            checked={isActive}
                         />
                     </Col>
                 </Form.Group>
@@ -119,4 +119,4 @@ function Category() {
     )
 }
 
-export default Category;
+export default GlossaryType;

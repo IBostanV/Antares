@@ -4,16 +4,19 @@ import saveGlossary from "../../../api/glossary/save";
 import getByCategoryGlossaries from "../../../api/glossary/get-all";
 import Form from 'react-bootstrap/Form';
 import {Button, Image, Row, Col, Table} from "react-bootstrap";
+import getGlossaryTypes from "../../../api/glossary/get-types";
 
 export default function Glossary() {
     const [glossaries, setGlossaries] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [glossaryTypes, setGlossaryTypes] = useState([]);
 
     const [addParent, setAddParent] = useState();
     const [addKey, setAddKey] = useState('');
     const [addValue, setAddValue] = useState('');
     const [addAttachment, setAddAttachment] = useState();
     const [addIsActive, setAddIsActive] = useState(false);
+    const [addType, setAddType] = useState('');
 
     const [glossariesBy, setGlossariesBy] = useState(1);
     const [blob, setBlob] = useState(null);
@@ -21,6 +24,9 @@ export default function Glossary() {
         key: '',
         value: '',
         isActive: false,
+        type: {
+            name: ''
+        },
         category: {
             catId: ''
         }
@@ -36,17 +42,26 @@ export default function Glossary() {
     }, []);
 
     useEffect(() => {
+        const fetchGlossaryTypes = async () => {
+            return await getGlossaryTypes();
+        };
+        fetchGlossaryTypes().then((types) => {
+            setGlossaryTypes(types);
+            setAddType(types?.[0]);
+        });
+    }, []);
+
+    useEffect(() => {
         const fetchCategoryGlossaries = async () => {
             return await getByCategoryGlossaries(glossariesBy);
         };
         fetchCategoryGlossaries().then((glossaries) => {
             setGlossaries(glossaries);
         });
-
-
     }, [glossariesBy]);
 
     const handleKey = (event) => setAddKey(event.target.value);
+    const handleType = (event) => setAddType({id: event.target.value});
     const handleValue = (event) => setAddValue(event.target.value)
     const handleParent = (event) => setAddParent(event.target.value);
     const handleActive = (event) => setAddIsActive(event.target.checked);
@@ -56,6 +71,7 @@ export default function Glossary() {
         const response = await saveGlossary(
             {
                 key: addKey,
+                type: addType,
                 value: addValue,
                 parent: addParent,
                 category: {catId: glossariesBy},
@@ -91,7 +107,7 @@ export default function Glossary() {
     return (
         <div>
             <div className={'d-flex border'}>
-                <div className={'col-4 border'}>
+                <div className={'col-5 border'}>
                     <h3 className={'text-center'}>Glossaries by</h3>
                     <Form.Select aria-label="Category" onChange={(event) => setGlossariesBy(event.target.value)}>
                     {categories?.map(category => (
@@ -104,6 +120,8 @@ export default function Glossary() {
                         <tr>
                             <th>Key</th>
                             <th>Value</th>
+                            <th>Category</th>
+                            <th>Type</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -111,12 +129,14 @@ export default function Glossary() {
                             <tr onClick={() => setItemToEdit(glossary)} key={glossary.value} role="button">
                                 <td>{glossary.key}</td>
                                 <td>{glossary.value}</td>
+                                <td>{glossary.category?.name}</td>
+                                <td>{glossary.type?.name}</td>
                             </tr>
                         ))}
                         </tbody>
                     </Table>
                 </div>
-                <div className={'col-8 border'}>
+                <div className={'col-7 border'}>
                     <Form className={'border mb-2 pb-4'}>
                         <h3 className={'text-center'}>Add glossary</h3>
                         <hr/>
@@ -152,6 +172,17 @@ export default function Glossary() {
                                 <Form.Select aria-label="Category" onChange={(event) => setGlossariesBy(event.target.value)}>
                                     {categories?.map(category => (
                                         <option value={category.catId} key={category.catId}>{category.name}</option>
+                                    ))}
+                                </Form.Select>
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3">
+                            <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
+                            <Col sm={8}>
+                                <Form.Select aria-label="Category" onChange={handleType}>
+                                    {glossaryTypes?.map(type => (
+                                        <option value={type.id} key={type.name}>{type.name}</option>
                                     ))}
                                 </Form.Select>
                             </Col>
@@ -239,6 +270,20 @@ export default function Glossary() {
                             }))}>
                                 {categories?.map(category => (
                                     <option value={category.catId} key={category.catId}>{category.name}</option>
+                                ))}
+                            </Form.Select>
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} className="mb-3">
+                        <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
+                        <Col sm={8}>
+                            <Form.Select aria-label="Type" onChange={(event) => setItem((values) => ({
+                                ...values,
+                                type: {name: event.target.value}
+                            }))}>
+                                {glossaryTypes?.map(type => (
+                                    <option value={type.name} key={type.name}>{type.name}</option>
                                 ))}
                             </Form.Select>
                         </Col>
