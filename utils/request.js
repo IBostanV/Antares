@@ -45,12 +45,11 @@ const axiosRequest = (url, params = {}) => {
     .catch(({ response }) => {
       switch (response.status) {
         case 403:
+          throw new Error('Unauthorized. Status ' + response.status);
         case 500:
-          console.log(response.data);
-          break;
+          throw new Error(response.status + ' ' + response.data);
         default:
-          console.log(response.data);
-          break;
+          throw new Error(response.status + '' + response.data);
       }
     });
 };
