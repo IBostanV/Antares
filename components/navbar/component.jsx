@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import {Button} from 'react-bootstrap';
+import {Button, ButtonGroup} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {useRouter} from 'next/router';
 import {logout} from '../../api/authentication';
@@ -8,38 +8,36 @@ import {logout} from '../../api/authentication';
 function Navbar({isLoggedIn}) {
     const router = useRouter();
 
-    const signOut = () => {
-        logout().then(() => router.push('/'));
-    };
+    const signOut = () => logout().then(() => router.push('/'));
 
     return (
         <div className="index">
-            <Link href="/">
-                <Button>Home</Button>
-            </Link>
-            <Link href="/quiz">
-                <Button>Take Quiz</Button>
-            </Link>
-            <Link href="/sse">
-                <Button>SSE</Button>
-            </Link>
-            <Link href="/admin">
-                <Button>Admin</Button>
-            </Link>
+            <ButtonGroup aria-label="links">
+                <Link href="/">
+                    <Button variant={'outline-primary'}>Home</Button>
+                </Link>
+                <Link href="/quiz">
+                    <Button variant={'outline-primary'}>Express Quiz</Button>
+                </Link>
+                <Link href="/chat">
+                    <Button variant={'outline-primary'}>Chat</Button>
+                </Link>
+                <Link href="/admin">
+                    <Button variant={'outline-primary'}>Admin</Button>
+                </Link>
+            </ButtonGroup>
             {!isLoggedIn && (
                 <>
-                    <br/>
                     <Link href="/login">
-                        <Button>Login</Button>
+                        <Button variant={'outline-primary'}>Login</Button>
                     </Link>
-                    <br/>
                     <Link href="/register">
-                        <Button>Register</Button>
+                        <Button variant={'outline-primary'}>Register</Button>
                     </Link>
                 </>
             )}
             {isLoggedIn && (
-                <Button onClick={signOut}>Sign out</Button>
+                <Button onClick={signOut} variant={'outline-primary'}>Sign out</Button>
             )}
         </div>
     );

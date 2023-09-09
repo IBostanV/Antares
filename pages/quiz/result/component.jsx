@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
-import { useRouter } from 'next/router';
-import getUserHistoryQuiz from "../../api/quiz/get-user-quiz";
+import {useRouter} from 'next/router';
+import getUserHistoryQuiz from "../../../api/quiz/get-user-quiz";
 import {Table} from "react-bootstrap";
 
 function QuizResult() {
     const router = useRouter();
 
     const {historyId} = router.query;
-    const [historyQuiz, setHistoryQuiz] = useState({});
+    const [historyQuiz, setHistoryQuiz] = useState(null);
 
     useEffect(() => {
         const handleBeforeUnload = (event) => {
@@ -26,6 +26,13 @@ function QuizResult() {
         });
     }, []);
 
+    const millisToSeconds = (millis) => {
+        if (millis === 0) {
+            return '-';
+        }
+        return millis / 1000 + ' seconds';
+    }
+
     return (
         <div className={'m-auto mb-3 text-center'}>
             <h2>Quiz result</h2>
@@ -36,6 +43,7 @@ function QuizResult() {
                     <th>Question</th>
                     <th>Answer</th>
                     <th>Right answer</th>
+                    <th>Time</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -46,8 +54,16 @@ function QuizResult() {
                         {answer.userAnswer !== answer.rightAnswer && (
                             <td>{answer.rightAnswer}</td>
                         )}
+                        {answer.userAnswer === answer.rightAnswer && (<td/>)}
+                        <td>{millisToSeconds(answer.time)}</td>
                     </tr>
                 ))}
+                <tr>
+                    <td className={'h4'}>Time spent:</td>
+                    <td colSpan={3} className={'h4'}>
+                        <span>{`${historyQuiz?.spentTime} seconds`}</span>
+                    </td>
+                </tr>
                 </tbody>
             </Table>
         </div>

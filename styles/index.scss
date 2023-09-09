@@ -31,24 +31,11 @@ div {
 
 .index {
   background-color: #21252a;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
-  text-align: center;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  z-index: 1;
   box-shadow: black 0 0 8px;
-  backdrop-filter: blur(22px);
-}
-
-.z-index-one {
-  background-color: #000;
-  border-radius: 6px;
-  margin: 20px;
-  padding: 10px;
-  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
+  width: 100%;
 }
 
 .login-form {
@@ -76,4 +63,43 @@ main {
   &:focus-visible {
     outline: none !important;
   }
+}
+
+.wrapper .outer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper .box{
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  opacity: 1;
+  justify-content: space-between;
+}
+
+#previousQuestion {
+  opacity: 0.4;
+  pointer-events: none;
+  position: absolute;
+  transform: translateY(-100%) scale(0.7);
+}
+
+.box .content{
+  align-items: center;
+}
+
+.box .details{
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.details span{
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.box a:hover{
+  transform: scale(0.94);
 }
