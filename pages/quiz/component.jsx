@@ -1,24 +1,24 @@
 import React, {useEffect, useState} from "react";
 import getExpressQuiz from "../../api/quiz/get-express";
 import {Button, Image} from "react-bootstrap";
-import getAnswers from "../../api/question/get-answers";
 import saveUserQuiz from "../../api/quiz/save";
 import {useRouter} from 'next/router';
 import moment from 'moment';
+import getQuestionWithOptions from "../../api/question/get-with-options";
 
 function Quiz() {
     const router = useRouter();
 
     const [quiz, setQuiz] = useState({
         quizTime: null,
-        questionList: []
+        questionIds: []
     });
     const [overallTime, setOverallTime] = useState();
     const [userAnswers, setUserAnswers] = useState([]);
     const [completed, setCompleted] = useState(false);
     const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState({});
-    const [previousQuestion, setPreviousQuestion] = useState({});
+    const [questionIds, setQuestionIds] = useState([]);
 
     useEffect(() => {
         const fetchExpressQuiz = async () => {
@@ -28,12 +28,12 @@ function Quiz() {
             if (expressQuiz) {
                 setQuiz(expressQuiz);
                 setCurrentQuestionTime(Date.now());
-                setCurrentQuestion(expressQuiz?.questionList?.shift());
+                setQuestionIds(Array.from(expressQuiz.questionIds));
 
                 const time = moment().clone().add(expressQuiz.quizTime + 1, 'seconds');
                 setInterval(() => {
                     const remainingTime = moment(time).diff(moment(), 'seconds');
-                    if (remainingTime > -1) {
+                    if (remainingTime !== 0) {
                         setOverallTime(remainingTime);
                     } else {
                         setCompleted(true);
@@ -42,6 +42,12 @@ function Quiz() {
             }
         });
     }, []);
+
+    useEffect(() => {
+        if (questionIds.length) {
+            handleCurrentQuestion(questionIds.shift());
+        }
+    }, [questionIds]);
 
     useEffect(() => {
         if (completed) {
@@ -60,22 +66,22 @@ function Quiz() {
     }
 
     const handleAnswer = (termId) => {
-        const fetchAnswers = async () => {
-            return await getAnswers(currentQuestion.id);
-        }
-        fetchAnswers().then(result => {
-            const now = Date.now();
-            setUserAnswers(values => [...values, {[currentQuestion.id]: {answer: termId, time: now - currentQuestionTime}}])
-            setCurrentQuestionTime(now);
+        const now = Date.now();
+        setUserAnswers(values => [...values, {[currentQuestion.id]: {answer: termId, time: now - currentQuestionTime}}])
+        setCurrentQuestionTime(now);
 
-            if (quiz.questionList.length) {
-                const answers = result?.map(answer => answer.glossary.termId);
-                setPreviousQuestion({...currentQuestion, result: answers.includes(termId) ? 'text-success' : 'text-danger'});
-                setCurrentQuestion(quiz.questionList?.shift());
-            } else {
-                setCompleted(true);
-            }
-        })
+        if (questionIds.length) {
+            handleCurrentQuestion(questionIds.shift());
+        } else {
+            setCompleted(true);
+        }
+    }
+
+    const handleCurrentQuestion = (questionId) => {
+        const fetchQuestionWithOptions = async () => {
+            return await getQuestionWithOptions(questionId);
+        }
+        fetchQuestionWithOptions().then(question => setCurrentQuestion(question));
     }
 
     const handleImage = (source) => {
@@ -88,17 +94,12 @@ function Quiz() {
             <div className="w-100 h-100 d-flex justify-content-center flex-column">
                 <div className="wrapper">
                     <div className="outer flex-column align-content-between">
-                        <div className="box" id="previousQuestion">
-                            <div className="content">
-                                <h1 className={`text-center ${previousQuestion.result}`}>{previousQuestion.content}</h1>
-                            </div>
-                        </div>
                         <div className="box">
                             <div className="content">
                                 <h1 className={'text-center'}>{currentQuestion?.content}</h1>
                                 <div className="details">
                                     {currentQuestion?.answers?.map(answer => (
-                                        <div>
+                                        <div key={answer.content}>
                                             <Image rounded src={handleImage(answer?.glossary.attachment)} fluid width={100} height={150}/>
                                             <Button
                                                 variant="outline-light"
