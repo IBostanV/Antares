@@ -8,7 +8,6 @@ import getQuestionLanguages from "../../../api/question/get-languages";
 import saveQuestion from "../../../api/question/save";
 import getQuestions from "../../../api/question/get-all";
 import getByCategoryGlossaries from "../../../api/glossary/get-all";
-import {value} from "lodash/seq";
 
 export default function Glossary() {
     const [types, setTypes] = useState([]);
@@ -91,7 +90,7 @@ export default function Glossary() {
             setGlossaries(glossaries);
             setGlossary(glossaries?.[0]);
         })
-    }, [category]);
+    }, [category.catId]);
 
     const handleTopic = (event) => {
         setTopic(event.target.value);
@@ -114,7 +113,7 @@ export default function Glossary() {
     }
 
     const handleCategory = (event) => {
-        setCategory({catId: event.target.value});
+        setCategory(JSON.parse(event.target.value));
     }
 
     const handleAttributes = (event) => {
@@ -151,21 +150,21 @@ export default function Glossary() {
         const answerEntries = Object.entries(answerTranslations);
         const response = await saveQuestion(
             {
-                topic,
                 type,
-                answers: [{content: answer || (answerByGlossary || null), glossary}],
+                topic,
                 content,
-                priority,
                 isActive,
-                category,
+                priority,
                 complexityLevel,
                 attributes: [attributes],
+                category: {catId: category.catId},
+                answers: [{content: answer || (answerByGlossary || null), glossary}],
                 translations: translationEntries.map(e => ({description: e[1], language: {langId: e[0]}})),
                 answerTranslations: answerEntries.map(e => ({description: e[1], language: {langId: e[0]}}))
             });
 
         if (response) {
-            setQuestions(values => [...values, response.data]);
+            setQuestions(values => [...values, {...response.data, category}]);
         }
     }
 
@@ -245,6 +244,17 @@ export default function Glossary() {
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
+                    <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
+                    <Col sm={8}>
+                        <Form.Select aria-label="Category" onChange={handleCategory}>
+                            {categories?.map(category => (
+                                <option value={JSON.stringify(category)} key={category.catId}>{category.name}</option>
+                            ))}
+                        </Form.Select>
+                    </Col>
+                </Form.Group>
+
+                <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Answer</Form.Label>
                     <Col sm={4}>
                         <Form.Control
@@ -286,17 +296,6 @@ export default function Glossary() {
                         </Col>
                     </Form.Group>
                 )}
-
-                <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
-                    <Col sm={8}>
-                        <Form.Select aria-label="Category" onChange={handleCategory}>
-                            {categories?.map(category => (
-                                <option value={category.catId} key={category.catId}>{category.name}</option>
-                            ))}
-                        </Form.Select>
-                    </Col>
-                </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>

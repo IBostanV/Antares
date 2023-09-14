@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import getExpressQuiz from "../../api/quiz/get-express";
-import {Button} from "react-bootstrap";
+import {Button, Image} from "react-bootstrap";
 import getAnswers from "../../api/question/get-answers";
 import saveUserQuiz from "../../api/quiz/save";
 import {useRouter} from 'next/router';
@@ -25,19 +25,21 @@ function Quiz() {
             return await getExpressQuiz();
         }
         fetchExpressQuiz().then(expressQuiz => {
-            setQuiz(expressQuiz);
-            setCurrentQuestionTime(Date.now());
-            setCurrentQuestion(expressQuiz?.questionList?.shift());
+            if (expressQuiz) {
+                setQuiz(expressQuiz);
+                setCurrentQuestionTime(Date.now());
+                setCurrentQuestion(expressQuiz?.questionList?.shift());
 
-            const time = moment().clone().add(expressQuiz.quizTime + 1, 'seconds');
-            setInterval(() => {
-                const remainingTime = moment(time).diff(moment(), 'seconds');
-                if (remainingTime > -1) {
-                    setOverallTime(remainingTime);
-                } else {
-                    setCompleted(true);
-                }
-            }, 100);
+                const time = moment().clone().add(expressQuiz.quizTime + 1, 'seconds');
+                setInterval(() => {
+                    const remainingTime = moment(time).diff(moment(), 'seconds');
+                    if (remainingTime > -1) {
+                        setOverallTime(remainingTime);
+                    } else {
+                        setCompleted(true);
+                    }
+                }, 100);
+            }
         });
     }, []);
 
@@ -76,6 +78,10 @@ function Quiz() {
         })
     }
 
+    const handleImage = (source) => {
+        return `data:image/jpeg;base64,${source}`;
+    }
+
     return (
         <div className="d-flex h-100 flex-column">
             <h1 className="text-center">{overallTime?.valueOf()}</h1>
@@ -92,12 +98,15 @@ function Quiz() {
                                 <h1 className={'text-center'}>{currentQuestion?.content}</h1>
                                 <div className="details">
                                     {currentQuestion?.answers?.map(answer => (
-                                        <Button
-                                            variant="outline-light"
-                                            key={answer.content}
-                                            onClick={() => handleAnswer(answer.glossary.termId)}>
-                                            {answer.content}
-                                        </Button>
+                                        <div>
+                                            <Image rounded src={handleImage(answer?.glossary.attachment)} fluid width={100} height={150}/>
+                                            <Button
+                                                variant="outline-light"
+                                                key={answer.content}
+                                                onClick={() => handleAnswer(answer.glossary.termId)}>
+                                                {answer.content}
+                                            </Button>
+                                        </div>
                                     ))}
                                 </div>
                             </div>

@@ -7,8 +7,8 @@ import {Button, Col, Row, Table} from "react-bootstrap";
 function Category() {
     const [categories, setCategories] = useState([]);
 
-    const [name, setName] = useState('');
     const [parent, setParent] = useState();
+    const [name, setName] = useState('');
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
@@ -29,15 +29,16 @@ function Category() {
         setParent({catId: category.catId, name: category.name});
     }
 
+    const handleVisible = (event) => {
+        setVisible(event.target.checked);
+    }
+
     const submit = async () => {
         const response = await saveCategory({name, parent, visible});
         if (response) {
+            setName('');
             setCategories([...categories, response.data]);
         }
-    }
-
-    const handleVisible = (event) => {
-        setVisible(event.target.checked);
     }
 
     return (
@@ -48,7 +49,7 @@ function Category() {
                     <tr>
                         <th>Name</th>
                         <th>Sub Category</th>
-                        <th>Visible</th>
+                        <th className="text-center">Visible</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -56,9 +57,9 @@ function Category() {
                         <tr key={item.catId}>
                             <td>{item.name}</td>
                             <td>{item?.parent?.name}</td>
-                            <td>
-                                <Form.Check
-                                    type={'checkbox'}
+                            <td className="text-center">
+                                <Form.Switch
+                                    disabled
                                     id={`default-checkbox`}
                                     defaultChecked={item.visible}
                                 />
@@ -98,9 +99,8 @@ function Category() {
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Visible</Form.Label>
-                    <Col sm={8}>
-                        <Form.Check
-                            type={'checkbox'}
+                    <Col sm={8} style={{display: 'flex', alignItems: 'center'}}>
+                        <Form.Switch
                             id={`visible`}
                             onChange={handleVisible}
                             checked={visible}

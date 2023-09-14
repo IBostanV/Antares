@@ -13,10 +13,11 @@ export default function Glossary() {
 
     const [addParent, setAddParent] = useState();
     const [addKey, setAddKey] = useState('');
+    const [addType, setAddType] = useState('');
     const [addValue, setAddValue] = useState('');
     const [addAttachment, setAddAttachment] = useState();
+    const [addCategory, setAddCategory] = useState({});
     const [addIsActive, setAddIsActive] = useState(false);
-    const [addType, setAddType] = useState('');
 
     const [glossariesBy, setGlossariesBy] = useState(1);
     const [blob, setBlob] = useState(null);
@@ -66,6 +67,7 @@ export default function Glossary() {
     const handleParent = (event) => setAddParent(event.target.value);
     const handleActive = (event) => setAddIsActive(event.target.checked);
     const handleAttachment = (event) => setAddAttachment(event.target.files[0]);
+    const handleCategory = (event) => setAddCategory(JSON.parse(event.target.value));
 
     const saveNew = async () => {
         const response = await saveGlossary(
@@ -74,14 +76,11 @@ export default function Glossary() {
                 type: addType,
                 value: addValue,
                 parent: addParent,
-                category: {catId: glossariesBy},
+                category: {catId: addCategory.catId},
                 isActive: addIsActive
             }, addAttachment);
         if (response) {
-            setGlossaries(values => [
-                ...values,
-                response.data
-            ]);
+            setGlossaries(values => [...values, {...response.data, category: addCategory}]);
         }
     }
 
@@ -169,9 +168,9 @@ export default function Glossary() {
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                             <Col sm={8}>
-                                <Form.Select aria-label="Category" onChange={(event) => setGlossariesBy(event.target.value)}>
+                                <Form.Select aria-label="Category" onChange={handleCategory}>
                                     {categories?.map(category => (
-                                        <option value={category.catId} key={category.catId}>{category.name}</option>
+                                        <option value={JSON.stringify(category)} key={category.catId}>{category.name}</option>
                                     ))}
                                 </Form.Select>
                             </Col>
@@ -264,7 +263,7 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                         <Col sm={8}>
-                            <Form.Select aria-label="Category" onChange={(event) => setItem((values) => ({
+                            <Form.Select aria-label="Category" value={item.category.catId} onChange={(event) => setItem((values) => ({
                                 ...values,
                                 category: {catId: event.target.value}
                             }))}>
