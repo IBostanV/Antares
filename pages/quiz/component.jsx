@@ -9,21 +9,16 @@ import getQuestionWithOptions from "../../api/question/get-with-options";
 function Quiz() {
     const router = useRouter();
 
-    const [quiz, setQuiz] = useState({
-        quizTime: null,
-        questionIds: []
-    });
     const [overallTime, setOverallTime] = useState();
     const [userAnswers, setUserAnswers] = useState([]);
-    const [completed, setCompleted] = useState(false);
-    const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
-    const [currentQuestion, setCurrentQuestion] = useState({});
     const [questionIds, setQuestionIds] = useState([]);
+    const [completed, setCompleted] = useState(false);
+    const [currentQuestion, setCurrentQuestion] = useState({});
+    const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
+    const [quiz, setQuiz] = useState({quizTime: null, questionIds: []});
 
     useEffect(() => {
-        const fetchExpressQuiz = async () => {
-            return await getExpressQuiz();
-        }
+        const fetchExpressQuiz = async () => await getExpressQuiz()
         fetchExpressQuiz().then(expressQuiz => {
             if (expressQuiz) {
                 setQuiz(expressQuiz);
@@ -33,7 +28,7 @@ function Quiz() {
                 const time = moment().clone().add(expressQuiz.quizTime + 1, 'seconds');
                 setInterval(() => {
                     const remainingTime = moment(time).diff(moment(), 'seconds');
-                    if (remainingTime !== 0) {
+                    if (remainingTime !== 0 && remainingTime > -1) {
                         setOverallTime(remainingTime);
                     } else {
                         setCompleted(true);
@@ -56,9 +51,8 @@ function Quiz() {
     }, [completed]);
 
     const saveQuizResult = (spentTime) => {
-        const saveResult = async () => {
-            return await saveUserQuiz({quiz, spentTime, answersJson: JSON.stringify(userAnswers)});
-        }
+        const saveResult = async () =>
+            await saveUserQuiz({quiz, spentTime, answersJson: JSON.stringify(userAnswers)})
         saveResult().then(result => {
             router.push('/quiz/result?historyId=' + result.data.historyId)
                 .then(pushEvent => console.log(pushEvent));
@@ -78,9 +72,7 @@ function Quiz() {
     }
 
     const handleCurrentQuestion = (questionId) => {
-        const fetchQuestionWithOptions = async () => {
-            return await getQuestionWithOptions(questionId);
-        }
+        const fetchQuestionWithOptions = async () => await getQuestionWithOptions(questionId)
         fetchQuestionWithOptions().then(question => setCurrentQuestion(question));
     }
 
@@ -100,11 +92,11 @@ function Quiz() {
                                 <div className="details">
                                     {currentQuestion?.answers?.map(answer => (
                                         <div key={answer.content}>
-                                            <Image rounded src={handleImage(answer?.glossary.attachment)} fluid width={100} height={150}/>
+                                            <Image rounded src={handleImage(answer?.glossaryAttachment)} fluid width={100} height={150}/>
                                             <Button
                                                 variant="outline-light"
                                                 key={answer.content}
-                                                onClick={() => handleAnswer(answer.glossary.termId)}>
+                                                onClick={() => handleAnswer(answer.termId)}>
                                                 {answer.content}
                                             </Button>
                                         </div>

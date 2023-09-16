@@ -11,9 +11,9 @@ export default function Glossary() {
     const [categories, setCategories] = useState([]);
     const [glossaryTypes, setGlossaryTypes] = useState([]);
 
+    const [addType, setAddType] = useState();
     const [addParent, setAddParent] = useState();
     const [addKey, setAddKey] = useState('');
-    const [addType, setAddType] = useState('');
     const [addValue, setAddValue] = useState('');
     const [addAttachment, setAddAttachment] = useState();
     const [addCategory, setAddCategory] = useState({});
@@ -34,40 +34,48 @@ export default function Glossary() {
     });
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            return await getCategories();
-        };
+        const fetchCategories = async () => await getCategories();
         fetchCategories().then((categories) => {
             setCategories(categories);
         });
     }, []);
 
     useEffect(() => {
-        const fetchGlossaryTypes = async () => {
-            return await getGlossaryTypes();
-        };
+        const fetchGlossaryTypes = async () => await getGlossaryTypes();
         fetchGlossaryTypes().then((types) => {
             setGlossaryTypes(types);
-            setAddType(types?.[0]);
         });
     }, []);
 
     useEffect(() => {
-        const fetchCategoryGlossaries = async () => {
-            return await getByCategoryGlossaries(glossariesBy);
-        };
+        const fetchCategoryGlossaries = async () => await getByCategoryGlossaries(glossariesBy);
         fetchCategoryGlossaries().then((glossaries) => {
             setGlossaries(glossaries);
         });
     }, [glossariesBy]);
 
     const handleKey = (event) => setAddKey(event.target.value);
-    const handleType = (event) => setAddType({id: event.target.value});
     const handleValue = (event) => setAddValue(event.target.value)
     const handleParent = (event) => setAddParent(event.target.value);
     const handleActive = (event) => setAddIsActive(event.target.checked);
     const handleAttachment = (event) => setAddAttachment(event.target.files[0]);
-    const handleCategory = (event) => setAddCategory(JSON.parse(event.target.value));
+    const handleCategory = (event) => {
+        const category = categories[event.target.value];
+        setAddCategory(category);
+    }
+
+    const handleType = (event) => {
+        const type = glossaryTypes[event.target.value];
+        setAddType({id: type.id, name: type.name});
+    }
+
+    const handleTypeEdit = (event) => {
+        const value = event.target.value || null;
+        setItem((values) => ({
+            ...values,
+            type: value && {id: value}
+        }));
+    }
 
     const saveNew = async () => {
         const response = await saveGlossary(
@@ -76,11 +84,16 @@ export default function Glossary() {
                 type: addType,
                 value: addValue,
                 parent: addParent,
-                category: {catId: addCategory.catId},
-                isActive: addIsActive
+                isActive: addIsActive,
+                categoryId: addCategory.catId
             }, addAttachment);
         if (response) {
-            setGlossaries(values => [...values, {...response.data, category: addCategory}]);
+            setGlossaries(values => [...values,
+                {
+                    ...response.data,
+                    categoryName: addCategory.name,
+                    categoryId: addCategory.catId
+                }]);
         }
     }
 
@@ -94,11 +107,15 @@ export default function Glossary() {
     }
 
     const edit = async () => {
-        const response = await saveGlossary({...item, attachment: null}, typeof item.attachment === 'string' ? null : item.attachment);
+        const response = await saveGlossary({
+            ...item,
+            attachment: null
+        }, typeof item.attachment === 'string' ? null : item.attachment);
         if (response) {
             const index = glossaries.findIndex(item => item.termId === response.data.termId);
-            if (index) {
+            if (index !== -1) {
                 glossaries.splice(index, 1, response.data);
+                setGlossaries([...glossaries]);
             }
         }
     }
@@ -121,6 +138,7 @@ export default function Glossary() {
                             <th>Value</th>
                             <th>Category</th>
                             <th>Type</th>
+                            <th>Is active</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -128,8 +146,14 @@ export default function Glossary() {
                             <tr onClick={() => setItemToEdit(glossary)} key={glossary.value} role="button">
                                 <td>{glossary.key}</td>
                                 <td>{glossary.value}</td>
-                                <td>{glossary.category?.name}</td>
+                                <td>{glossary.categoryName}</td>
                                 <td>{glossary.type?.name}</td>
+                                <td>
+                                    <Form.Check
+                                        disabled
+                                        type={'switch'}
+                                        checked={glossary.isActive}
+                                    /></td>
                             </tr>
                         ))}
                         </tbody>
@@ -169,8 +193,8 @@ export default function Glossary() {
                             <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                             <Col sm={8}>
                                 <Form.Select aria-label="Category" onChange={handleCategory}>
-                                    {categories?.map(category => (
-                                        <option value={JSON.stringify(category)} key={category.catId}>{category.name}</option>
+                                    {categories?.map((category, index) => (
+                                        <option value={index} key={category.catId}>{category.name}</option>
                                     ))}
                                 </Form.Select>
                             </Col>
@@ -180,8 +204,9 @@ export default function Glossary() {
                             <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
                             <Col sm={8}>
                                 <Form.Select aria-label="Category" onChange={handleType}>
-                                    {glossaryTypes?.map(type => (
-                                        <option value={type.id} key={type.name}>{type.name}</option>
+                                    <option value={null}></option>
+                                    {glossaryTypes?.map((type, index) => (
+                                        <option value={index} key={type.name}>{type.name}</option>
                                     ))}
                                 </Form.Select>
                             </Col>
@@ -263,7 +288,7 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                         <Col sm={8}>
-                            <Form.Select aria-label="Category" value={item.category.catId} onChange={(event) => setItem((values) => ({
+                            <Form.Select aria-label="Category" value={item.categoryId} onChange={(event) => setItem((values) => ({
                                 ...values,
                                 category: {catId: event.target.value}
                             }))}>
@@ -277,12 +302,10 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
                         <Col sm={8}>
-                            <Form.Select aria-label="Type" onChange={(event) => setItem((values) => ({
-                                ...values,
-                                type: {name: event.target.value}
-                            }))}>
+                            <Form.Select aria-label="Type" value={item.type?.id || {id: null}} onChange={handleTypeEdit}>
+                                <option value={null}></option>
                                 {glossaryTypes?.map(type => (
-                                    <option value={type.name} key={type.name}>{type.name}</option>
+                                    <option value={type.id} key={type.name}>{type.name}</option>
                                 ))}
                             </Form.Select>
                         </Col>

@@ -17,10 +17,7 @@ function QuizResult() {
     }, []);
 
     useEffect(() => {
-        const fetchUserQuiz = async () => {
-            return await getUserHistoryQuiz(historyId);
-        }
-
+        const fetchUserQuiz = async () => await getUserHistoryQuiz(historyId)
         fetchUserQuiz().then(result => {
             setHistoryQuiz(result);
         });

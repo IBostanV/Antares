@@ -1,43 +1,35 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import getCategories from '../../../api/category/get-all';
 import {saveCategory} from "../../../api/category";
 import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
 
 function Category() {
+    const name = useRef();
+    const parent = useRef();
+    const visible = useRef();
+
     const [categories, setCategories] = useState([]);
 
-    const [parent, setParent] = useState();
-    const [name, setName] = useState('');
-    const [visible, setVisible] = useState(true);
-
     useEffect(() => {
-        const fetchData = async () => {
-            return await getCategories();
-        };
-
-        fetchData().then((result) => setCategories(result));
+        const fetchCategories = async () => await getCategories();
+        fetchCategories().then((result) => setCategories(result));
     }, []);
 
-
-    const handleName = (event) => {
-        setName(event.target.value);
-    }
-
-    const handleSubcategory = (event) => {
-        const category = JSON.parse(event.target.value);
-        setParent({catId: category.catId, name: category.name});
-    }
-
-    const handleVisible = (event) => {
-        setVisible(event.target.checked);
-    }
-
     const submit = async () => {
-        const response = await saveCategory({name, parent, visible});
+        const response = await saveCategory({
+            name: name.current.value,
+            parentId: parent.current.value,
+            visible: visible.current.checked
+        });
+
         if (response) {
-            setName('');
-            setCategories([...categories, response.data]);
+            const index = parent.current.selectedIndex;
+            const parentName = parent.current.options[index].textContent;
+            setCategories([...categories, {...response.data, parentName}]);
+
+            name.current.value = null;
+            parent.current.value = null;
         }
     }
 
@@ -56,11 +48,10 @@ function Category() {
                     {categories?.map(item => (
                         <tr key={item.catId}>
                             <td>{item.name}</td>
-                            <td>{item?.parent?.name}</td>
+                            <td>{item.parentName}</td>
                             <td className="text-center">
                                 <Form.Switch
                                     disabled
-                                    id={`default-checkbox`}
                                     defaultChecked={item.visible}
                                 />
                             </td>
@@ -72,46 +63,78 @@ function Category() {
             <Form className={'col-9'}>
                 <h3 className={'text-center'}>Categories</h3>
                 <hr/>
-                <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3} className={'text-end'}>Name</Form.Label>
+                <Form.Group
+                    as={Row}
+                    className="mb-3">
+                    <Form.Label
+                        column sm={3}
+                        className={'text-end'}>
+                        Name
+                    </Form.Label>
                     <Col sm={8}>
                         <Form.Control
-                            placeholder="Name"
+                            ref={name}
                             aria-label="Name"
-                            aria-describedby="basic-addon1"
-                            onChange={handleName}
-                            value={name}
+                            placeholder="Name"
                         />
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3} className={'text-end'}>Sub-category</Form.Label>
+                <Form.Group
+                    as={Row}
+                    className="mb-3">
+                    <Form.Label
+                        column sm={3}
+                        className={'text-end'}
+                    >
+                        Sub-category
+                    </Form.Label>
                     <Col sm={8}>
-                        <Form.Select aria-label="Sub-category" onChange={handleSubcategory}>
+                        <Form.Select
+                            aria-label="Sub-category"
+                            ref={parent}
+                        >
                             <option value={null}></option>
-                            {categories?.map(item => (
-                                <option value={JSON.stringify(item)} key={item.catId}>{item.name}</option>
-                            ))}
+                            {categories?.map(item =>
+                                (<option value={item.catId} key={item.catId}>{item.name}</option>)
+                            )}
                         </Form.Select>
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3} className={'text-end'}>Visible</Form.Label>
-                    <Col sm={8} style={{display: 'flex', alignItems: 'center'}}>
-                        <Form.Switch
-                            id={`visible`}
-                            onChange={handleVisible}
-                            checked={visible}
-                        />
+                <Form.Group
+                    as={Row}
+                    className="mb-3">
+                    <Form.Label
+                        column sm={3}
+                        className={'text-end'}
+                    >
+                        Visible
+                    </Form.Label>
+                    <Col
+                        sm={8}
+                        style={{display: 'flex', alignItems: 'center'}}
+                    >
+                        <Form.Switch ref={visible}/>
                     </Col>
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3">
-                    <Form.Label column sm={3}></Form.Label>
+                <Form.Group
+                    as={Row}
+                    className="mb-3">
+                    <Form.Label
+                        column sm={3}
+                        className={'text-end'}
+                    >
+                        Save
+                    </Form.Label>
                     <Col sm={8}>
-                        <Button variant={'primary'} onClick={submit}>Save</Button>
+                        <Button
+                            variant={'primary'}
+                            onClick={submit}
+                        >
+                            Submit
+                        </Button>
                     </Col>
                 </Form.Group>
             </Form>
