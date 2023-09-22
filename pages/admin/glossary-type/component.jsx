@@ -7,14 +7,12 @@ import saveGlossaryType from "../../../api/glossary/save-type";
 function GlossaryType() {
     const [glossaryTypes, setGlossaryTypes] = useState([]);
 
-    const [name, setName] = useState('');
     const [options, setOptions] = useState();
+    const [name, setName] = useState('');
     const [isActive, setIsActive] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
-            return await getGlossaryTypes();
-        };
+        const fetchData = async () => await getGlossaryTypes();
 
         fetchData().then((result) => setGlossaryTypes(result));
     }, []);
@@ -35,6 +33,7 @@ function GlossaryType() {
     const submit = async () => {
         const response = await saveGlossaryType({name, options, isActive});
         if (response) {
+            setName('');
             setGlossaryTypes([...glossaryTypes, response.data]);
         }
     }
@@ -56,9 +55,8 @@ function GlossaryType() {
                             <td>{item.name}</td>
                             <td>{item.options}</td>
                             <td>
-                                <Form.Check
-                                    type={'checkbox'}
-                                    id={`default-checkbox`}
+                                <Form.Switch
+                                    disabled
                                     defaultChecked={isActive}
                                 />
                             </td>
@@ -99,9 +97,7 @@ function GlossaryType() {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Is Active</Form.Label>
                     <Col sm={8}>
-                        <Form.Check
-                            type={'checkbox'}
-                            id={`visible`}
+                        <Form.Switch
                             onChange={handleIsActive}
                             checked={isActive}
                         />

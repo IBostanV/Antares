@@ -24,9 +24,7 @@ function Message({hostUrl}) {
     };
 
     const history = () => {
-        const fetchData = async () => {
-            return await fetchMessages('/api/message', 'news');
-        };
+        const fetchData = async () => await fetchMessages('/api/message', 'news');
         fetchData().then(response => {
             setLoaded(true);
             if (response) setMessages(response);

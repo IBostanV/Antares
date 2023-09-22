@@ -29,52 +29,38 @@ export default function Glossary() {
     const [translations, setTranslations] = useState({});
     const [answerTranslations, setAnswerTranslations] = useState({});
     const [glossary, setGlossary] = useState({});
-    const [answerByGlossary, setAnswerByGlossary] = useState('');
 
     useEffect(() => {
-        const fetchQuestionTypes = async () => {
-            return await getQuestionTypes();
-        }
+        const fetchQuestionTypes = async () => await getQuestionTypes()
 
         fetchQuestionTypes().then(values => {
             setTypes(values);
-            setType(values?.[0]);
         });
     }, []);
 
     useEffect(() => {
-        const fetchQuestionLanguages = async () => {
-            return await getQuestionLanguages();
-        }
+        const fetchQuestionLanguages = async () => await getQuestionLanguages()
 
         fetchQuestionLanguages().then(values => setLanguages(values));
     }, []);
 
     useEffect(() => {
-        const fetchQuestionAttributes = async () => {
-            return await getQuestionAttributes();
-        }
+        const fetchQuestionAttributes = async () => await getQuestionAttributes()
 
         fetchQuestionAttributes().then(values => {
             setAttributesSet(values);
-            setAttributes(values?.[0]);
         });
     }, []);
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            return await getCategories();
-        };
+        const fetchCategories = async () => await getCategories();
         fetchCategories().then((categories) => {
             setCategories(categories);
-            setCategory(categories?.[0]);
         });
     }, []);
 
     useEffect(() => {
-        const fetchQuestions = async () => {
-            return await getQuestions();
-        }
+        const fetchQuestions = async () => await getQuestions()
 
         fetchQuestions().then(questions => {
             setQuestions(questions);
@@ -82,9 +68,7 @@ export default function Glossary() {
     }, []);
 
     useEffect(() => {
-        const fetchGlossaries = async () => {
-            return await getByCategoryGlossaries(category.catId || 1);
-        }
+        const fetchGlossaries = async () => await getByCategoryGlossaries(category.catId || 1)
 
         fetchGlossaries().then(glossaries => {
             setGlossaries(glossaries);
@@ -92,43 +76,29 @@ export default function Glossary() {
         })
     }, [category.catId]);
 
-    const handleTopic = (event) => {
-        setTopic(event.target.value);
-    }
+    const handleTopic = (event) => setTopic(event.target.value);
 
-    const handlePriority = (event) => {
-        setPriority(event.target.value);
-    }
+    const handlePriority = (event) => setPriority(event.target.value);
 
-    const handleIsActive = (event) => {
-        setIsActive(event.target.checked);
-    }
+    const handleIsActive = (event) => setIsActive(event.target.checked);
 
-    const handleComplexityLevel = (event) => {
-        setComplexityLevel(event.target.value);
-    }
+    const handleComplexityLevel = (event) => setComplexityLevel(event.target.value);
 
-    const handleContent = (event) => {
-        setContent(event.target.value);
-    }
+    const handleContent = (event) => setContent(event.target.value);
 
     const handleCategory = (event) => {
-        setCategory(JSON.parse(event.target.value));
+        const item = categories[event.target.value];
+        setCategory(item);
     }
+
+    const handleAnswer = (event) => setAnswer(event.target.value);
 
     const handleAttributes = (event) => {
         const value = event.target.value;
         setAttributes(value);
-        setAnswerByGlossary(handleAttributeChange(glossary));
     }
 
-    const handleAnswer = (event) => {
-        setAnswer(event.target.value);
-    }
-
-    const handleGlossary = (event) => {
-        setGlossary({termId: event.target.value});
-    }
+    const handleGlossary = (event) => setGlossary({termId: event.target.value});
 
     const handleTranslation = (event, langId) => {
         setTranslations(values => ({...values, [langId]: event.target.value}));
@@ -139,13 +109,11 @@ export default function Glossary() {
     }
 
     const handleAttributeChange = (glossary) => {
-        if (attributes === 'ANSWER_BY_KEY') {
-            return glossary?.key;
-        }
-        return glossary?.value;
+        return attributes.includes('ANSWER_BY_KEY') ? glossary?.key : glossary?.value
     }
 
     const save = async () => {
+        console.log(glossary);
         const translationEntries = Object.entries(translations);
         const answerEntries = Object.entries(answerTranslations);
         const response = await saveQuestion(
@@ -157,14 +125,15 @@ export default function Glossary() {
                 priority,
                 complexityLevel,
                 attributes: [attributes],
-                category: {catId: category.catId},
-                answers: [{content: answer || (answerByGlossary || null), glossary}],
+                categoryId: category.catId,
+                categoryName: category.name,
+                answers: [{content: answer, termId: glossary.termId}],
                 translations: translationEntries.map(e => ({description: e[1], language: {langId: e[0]}})),
                 answerTranslations: answerEntries.map(e => ({description: e[1], language: {langId: e[0]}}))
             });
 
         if (response) {
-            setQuestions(values => [...values, {...response.data, category}]);
+            setQuestions(values => [...values, response.data]);
         }
     }
 
@@ -247,8 +216,8 @@ export default function Glossary() {
                     <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                     <Col sm={8}>
                         <Form.Select aria-label="Category" onChange={handleCategory}>
-                            {categories?.map(category => (
-                                <option value={JSON.stringify(category)} key={category.catId}>{category.name}</option>
+                            {categories?.map((category, index) => (
+                                <option value={index} key={category.catId}>{category.name}</option>
                             ))}
                         </Form.Select>
                     </Col>
@@ -370,7 +339,7 @@ export default function Glossary() {
                             <td>{question.type}</td>
                             <td>{question.complexityLevel}</td>
                             <td>{question.content}</td>
-                            <td>{question.category?.name}</td>
+                            <td>{question.categoryName}</td>
                             <td>{question.attributes?.map(attribute => (
                                 <div key={attribute}>{attribute}</div>
                             ))}
