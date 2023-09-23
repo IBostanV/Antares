@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
 import getGlossaryTypes from "../../../api/glossary/get-types";
 import saveGlossaryType from "../../../api/glossary/save-type";
+import {toast} from "react-toastify";
 
 function GlossaryType() {
     const [glossaryTypes, setGlossaryTypes] = useState([]);
@@ -30,9 +31,11 @@ function GlossaryType() {
         setIsActive(event.target.checked);
     }
 
-    const submit = async () => {
+    const save = async () => {
         const response = await saveGlossaryType({name, options, isActive});
         if (response) {
+            toast.success('Glossary type successfully saved');
+
             setName('');
             setGlossaryTypes([...glossaryTypes, response.data]);
         }
@@ -96,10 +99,10 @@ function GlossaryType() {
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Is Active</Form.Label>
-                    <Col sm={8}>
+                    <Col sm={8} className="d-flex align-items-center">
                         <Form.Switch
-                            onChange={handleIsActive}
                             checked={isActive}
+                            onChange={handleIsActive}
                         />
                     </Col>
                 </Form.Group>
@@ -107,7 +110,7 @@ function GlossaryType() {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3}></Form.Label>
                     <Col sm={8}>
-                        <Button variant={'primary'} onClick={submit}>Save</Button>
+                        <Button variant={'primary'} onClick={save}>Save</Button>
                     </Col>
                 </Form.Group>
             </Form>

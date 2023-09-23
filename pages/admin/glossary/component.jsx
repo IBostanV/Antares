@@ -5,6 +5,7 @@ import getByCategoryGlossaries from "../../../api/glossary/get-all";
 import Form from 'react-bootstrap/Form';
 import {Button, Image, Row, Col, Table} from "react-bootstrap";
 import getGlossaryTypes from "../../../api/glossary/get-types";
+import {toast} from "react-toastify";
 
 export default function Glossary() {
     const [glossaries, setGlossaries] = useState([]);
@@ -77,7 +78,7 @@ export default function Glossary() {
         }));
     }
 
-    const saveNew = async () => {
+    const save = async () => {
         const response = await saveGlossary(
             {
                 key: addKey,
@@ -88,6 +89,8 @@ export default function Glossary() {
                 categoryId: addCategory.catId
             }, addAttachment);
         if (response) {
+            toast.success('Glossary successfully saved');
+
             setGlossaries(values => [...values,
                 {
                     ...response.data,
@@ -112,6 +115,8 @@ export default function Glossary() {
             attachment: null
         }, typeof item.attachment === 'string' ? null : item.attachment);
         if (response) {
+            toast.success('Category successfully edited');
+
             const index = glossaries.findIndex(item => item.termId === response.data.termId);
             if (index !== -1) {
                 glossaries.splice(index, 1, response.data);
@@ -239,12 +244,10 @@ export default function Glossary() {
 
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Is active</Form.Label>
-                            <Col sm={8}>
-                                <Form.Check
-                                    type={'checkbox'}
-                                    id={`isActive`}
-                                    onChange={handleActive}
+                            <Col sm={8} className="d-flex align-items-center">
+                                <Form.Switch
                                     checked={addIsActive}
+                                    onChange={handleActive}
                                 />
                             </Col>
                         </Form.Group>
@@ -252,7 +255,7 @@ export default function Glossary() {
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3}></Form.Label>
                             <Col sm={8}>
-                                <Button variant={'primary'} onClick={saveNew}>Save</Button>
+                                <Button variant={'primary'} onClick={save}>Save</Button>
                             </Col>
                         </Form.Group>
                     </Form>
@@ -325,12 +328,10 @@ export default function Glossary() {
 
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Is active</Form.Label>
-                        <Col sm={8}>
-                            <Form.Check
-                                type={'checkbox'}
-                                id={`editIsActive`}
-                                onChange={(event) => setItem((values) => ({...values, isActive: event.target.checked}))}
+                        <Col sm={8} className="d-flex align-items-center">
+                            <Form.Switch
                                 checked={item.isActive}
+                                onChange={(event) => setItem((values) => ({...values, isActive: event.target.checked}))}
                             />
                         </Col>
                     </Form.Group>
@@ -362,7 +363,7 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3}></Form.Label>
                         <Col sm={8}>
-                            <Button variant={'primary'} onClick={edit}>Save</Button>
+                            <Button variant={'primary'} onClick={edit}>Edit</Button>
                         </Col>
                     </Form.Group>
                 </div>

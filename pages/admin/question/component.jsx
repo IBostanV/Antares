@@ -8,27 +8,28 @@ import getQuestionLanguages from "../../../api/question/get-languages";
 import saveQuestion from "../../../api/question/save";
 import getQuestions from "../../../api/question/get-all";
 import getByCategoryGlossaries from "../../../api/glossary/get-all";
+import {toast} from "react-toastify";
 
 export default function Glossary() {
     const [types, setTypes] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [attributesSet, setAttributesSet] = useState([]);
     const [languages, setLanguages] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [glossaries, setGlossaries] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [attributesSet, setAttributesSet] = useState([]);
 
-    const [topic, setTopic] = useState('');
-    const [priority, setPriority] = useState(1);
     const [type, setType] = useState('');
+    const [topic, setTopic] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [glossary, setGlossary] = useState({});
+    const [content, setContent] = useState('');
+    const [priority, setPriority] = useState(1);
+    const [attributes, setAttributes] = useState([]);
+    const [translations, setTranslations] = useState({});
     const [isActive, setIsActive] = useState(false);
     const [complexityLevel, setComplexityLevel] = useState(1);
-    const [content, setContent] = useState('');
     const [category, setCategory] = useState({catId: 1});
-    const [attributes, setAttributes] = useState([]);
-    const [answer, setAnswer] = useState('');
-    const [translations, setTranslations] = useState({});
     const [answerTranslations, setAnswerTranslations] = useState({});
-    const [glossary, setGlossary] = useState({});
 
     useEffect(() => {
         const fetchQuestionTypes = async () => await getQuestionTypes()
@@ -113,7 +114,6 @@ export default function Glossary() {
     }
 
     const save = async () => {
-        console.log(glossary);
         const translationEntries = Object.entries(translations);
         const answerEntries = Object.entries(answerTranslations);
         const response = await saveQuestion(
@@ -133,7 +133,9 @@ export default function Glossary() {
             });
 
         if (response) {
-            setQuestions(values => [...values, response.data]);
+            toast.success('Question successfully saved');
+
+            setQuestions(values => [...values, response.data])
         }
     }
 
@@ -298,12 +300,10 @@ export default function Glossary() {
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Is active</Form.Label>
-                    <Col sm={8}>
-                        <Form.Check
-                            type={'checkbox'}
-                            id={`isActive`}
-                            onChange={handleIsActive}
+                    <Col sm={8} className="d-flex align-items-center">
+                        <Form.Switch
                             checked={isActive}
+                            onChange={handleIsActive}
                         />
                     </Col>
                 </Form.Group>
@@ -345,9 +345,8 @@ export default function Glossary() {
                             ))}
                             </td>
                             <td>
-                                <Form.Check
-                                    type={'checkbox'}
-                                    id={`isActive`}
+                                <Form.Switch
+                                    disabled
                                     defaultChecked={question.isActive}
                                 />
                             </td>

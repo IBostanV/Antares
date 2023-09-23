@@ -5,6 +5,11 @@ const authentication = (url, body) => request(url, {
     body,
     method: POST,
     withHeaders: true,
-}).then((response) => setCookie('authorization', response.headers.authorization));
+}).then((response) => {
+    if (response) {
+        setCookie('authorization', response.headers.authorization);
+        return response;
+    }
+});
 
 export default authentication;
