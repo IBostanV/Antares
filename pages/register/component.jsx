@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Button, Col, Container, Row,
 } from 'react-bootstrap';
-import { useRouter } from 'next/router';
-import { authenticate } from '../../api/authentication';
+import {useRouter} from 'next/router';
+import {authenticate} from '../../api/authentication';
 import {REGISTER_URL} from "../../api/constant";
 
 function Register() {
@@ -14,7 +14,11 @@ function Register() {
 
   const onSubmit = () => {
     if (password === repass) {
-      authenticate(REGISTER_URL, { email, password }).then(() => router.push('/'));
+      authenticate(REGISTER_URL, {email, password}).then((response) => {
+        if (response) {
+          router.push('/');
+        }
+      });
     }
   };
 

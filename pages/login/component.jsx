@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import React, {useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/router';
 import {
-  Button, Col, Container, Row,
+  Button, Col, Container, Form, InputGroup, Row,
 } from 'react-bootstrap';
-import { LOGIN_URL } from '../../api/constant';
+import {LOGIN_URL} from '../../api/constant';
 import validateEmail from '../../utils/validation';
 import {authenticate} from "../../api/authentication";
+import {toast} from "react-toastify";
 
 function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  const onSubmit = () => {
-    if (!validateEmail(email)) {
-      throw Error('Validation error. Invalid email address');
+  const email = useRef();
+  const password = useRef();
+
+  useEffect(() => {
+    const keyDownHandler = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        login();
+      }
+    };
+    document.addEventListener('keydown', keyDownHandler);
+
+    return () => document.removeEventListener('keydown', keyDownHandler);;
+  }, [email, password]);
+
+  const login = () => {
+    if (!validateEmail(email.current.value)) {
+      toast.error('Invalid email address');
+    } else {
+      authenticate(LOGIN_URL, {email: email.current.value, password: password.current.value})
+          .then((response) => response && router.push('/'));
     }
-    authenticate(LOGIN_URL, { email, password }).then(() => router.push('/'));
-  };
+  }
 
   return (
     <div className="login-form">
@@ -29,17 +45,31 @@ function Login() {
         </Row>
         <Row className="mt-4">
           <Col>
-            <input id="email" className="login-input pl-3 w-75" placeholder="Email" onChange={(e) => { setEmail(e.target.value); }} />
+            <InputGroup size="sm" className="mb-3">
+              <InputGroup.Text>Email</InputGroup.Text>
+              <Form.Control
+                  id="email"
+                  ref={email}
+                  type="email"
+              />
+            </InputGroup>
           </Col>
         </Row>
         <Row className="mt-3">
           <Col>
-            <input id="password" type="password" className="login-input pl-3 w-75" placeholder="Password" onChange={(e) => { setPassword(e.target.value); }} />
+            <InputGroup size="sm" className="mb-3">
+              <InputGroup.Text>Password</InputGroup.Text>
+              <Form.Control
+                  id="password"
+                  ref={password}
+                  type="password"
+              />
+            </InputGroup>
           </Col>
         </Row>
         <Row className="p-3">
           <Col>
-            <Button className="w-75" onClick={onSubmit}>Login</Button>
+            <Button onClick={login}>Login</Button>
           </Col>
         </Row>
       </Container>

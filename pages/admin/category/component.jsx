@@ -3,6 +3,7 @@ import getCategories from '../../../api/category/get-all';
 import {saveCategory} from "../../../api/category";
 import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
+import {toast} from "react-toastify";
 
 function Category() {
     const name = useRef();
@@ -24,6 +25,8 @@ function Category() {
         });
 
         if (response) {
+            toast.success('Category successfully saved');
+
             const index = parent.current.selectedIndex;
             const parentName = parent.current.options[index].textContent;
             setCategories([...categories, {...response.data, parentName}]);
