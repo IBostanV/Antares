@@ -148,15 +148,14 @@ export default function Glossary() {
                         </thead>
                         <tbody>
                         {glossaries?.map((glossary) => (
-                            <tr onClick={() => setItemToEdit(glossary)} key={glossary.value} role="button">
+                            <tr onClick={() => setItemToEdit(glossary)} key={glossary.key + glossary.value} role="button">
                                 <td>{glossary.key}</td>
                                 <td>{glossary.value}</td>
                                 <td>{glossary.categoryName}</td>
                                 <td>{glossary.type?.name}</td>
                                 <td>
-                                    <Form.Check
+                                    <Form.Switch
                                         disabled
-                                        type={'switch'}
                                         checked={glossary.isActive}
                                     /></td>
                             </tr>

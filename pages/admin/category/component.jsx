@@ -43,7 +43,7 @@ function Category() {
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Sub Category</th>
+                        <th>Parent</th>
                         <th className="text-center">Visible</th>
                     </tr>
                     </thead>
@@ -90,7 +90,7 @@ function Category() {
                         column sm={3}
                         className={'text-end'}
                     >
-                        Sub-category
+                        Parent
                     </Form.Label>
                     <Col sm={8}>
                         <Form.Select
