@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import getUserHistoryQuiz from "../../../api/quiz/get-user-quiz";
+import getUserHistoryQuiz from "../../../api/quiz/get-user-history";
 import {Table} from "react-bootstrap";
 
 function QuizResult() {
