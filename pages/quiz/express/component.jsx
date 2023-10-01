@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from "react";
-import getExpressQuiz from "../../api/quiz/get-express";
+import getExpressQuiz from "../../../api/quiz/get-express";
 import {Button, Image} from "react-bootstrap";
-import saveUserQuiz from "../../api/quiz/save";
+import saveUserQuiz from "../../../api/quiz/save";
 import {useRouter} from 'next/router';
 import moment from 'moment';
-import getQuestionWithOptions from "../../api/question/get-with-options";
+import getQuestionWithOptions from "../../../api/question/get-with-options";
+import {useInterval} from "primereact/hooks";
+import {Knob} from 'primereact/knob';
 
-function Quiz() {
+function ExpressQuiz() {
     const router = useRouter();
 
-    const [overallTime, setOverallTime] = useState();
+    const [overallTime, setOverallTime] = useState(0);
     const [userAnswers, setUserAnswers] = useState([]);
     const [questionIds, setQuestionIds] = useState([]);
     const [completed, setCompleted] = useState(false);
@@ -18,7 +20,8 @@ function Quiz() {
     const [quiz, setQuiz] = useState({quizTime: null, questionIds: []});
 
     useEffect(() => {
-        const fetchExpressQuiz = async () => await getExpressQuiz()
+        const fetchExpressQuiz = async () => await getExpressQuiz();
+
         fetchExpressQuiz().then(expressQuiz => {
             if (expressQuiz) {
                 setQuiz(expressQuiz);
@@ -53,6 +56,7 @@ function Quiz() {
     const saveQuizResult = (spentTime) => {
         const saveResult = async () =>
             await saveUserQuiz({quiz, spentTime, answersJson: JSON.stringify(userAnswers)})
+
         saveResult().then(result => {
             router.push('/quiz/result?historyId=' + result.data.historyId)
                 .then(pushEvent => console.log(pushEvent));
@@ -82,33 +86,40 @@ function Quiz() {
 
     return (
         <div className="d-flex h-100 flex-column">
-            <h1 className="text-center">{overallTime?.valueOf()}</h1>
-            <div className="w-100 h-100 d-flex justify-content-center flex-column">
-                <div className="wrapper">
-                    <div className="outer flex-column align-content-between">
-                        <div className="box">
-                            <div className="content">
-                                <h1 className={'text-center'}>{currentQuestion?.content}</h1>
-                                <div className="details">
-                                    {currentQuestion?.answers?.map(answer => (
-                                        <div key={answer.content}>
-                                            <Image rounded src={handleImage(answer?.glossaryAttachment)} fluid width={100} height={150}/>
-                                            <Button
-                                                variant="outline-light"
-                                                key={answer.content}
-                                                onClick={() => handleAnswer(answer.termId)}>
-                                                {answer.content}
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+            <Knob
+                readOnly
+                size={100}
+                textColor='white'
+                valueColor="white"
+                rangeColor="#0d6efd"
+                value={overallTime}
+                className='text-center'
+            />
+            <div className="d-flex justify-content-center align-items-center h-100 flex-column">
+                <h1 className='text-center'>{currentQuestion?.content}</h1>
+                <div className='d-flex'>
+                    {currentQuestion?.answers?.map(answer => (
+                        <div key={answer.content} className='d-flex align-items-center flex-column justify-content-center'>
+                            <Image
+                                fluid
+                                rounded
+                                width={200}
+                                height={150}
+                                src={handleImage(answer?.glossaryAttachment)}
+                            />
+                            <Button
+                                key={answer.content}
+                                variant="outline-light"
+                                onClick={() => handleAnswer(answer.termId)}
+                            >
+                                {answer.content}
+                            </Button>
                         </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </div>
     )
 }
 
-export default Quiz;
+export default ExpressQuiz;

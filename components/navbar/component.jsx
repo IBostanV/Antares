@@ -16,7 +16,10 @@ function Navbar({isLoggedIn}) {
                 <Link href="/">
                     <Button variant={'outline-primary'}>Home</Button>
                 </Link>
-                <Link href="/quiz">
+                <Link href="/quiz/categorized">
+                    <Button variant={'outline-primary'}>Take Quiz</Button>
+                </Link>
+                <Link href="/quiz/express">
                     <Button variant={'outline-primary'}>Express Quiz</Button>
                 </Link>
                 <Link href="/chat">

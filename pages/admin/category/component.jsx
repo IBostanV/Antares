@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import getCategories from '../../../api/category/get-all';
-import {saveCategory} from "../../../api/category";
+import {getAllCategories, saveCategory} from "../../../api/category";
 import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
 import {toast} from "react-toastify";
@@ -13,7 +12,7 @@ function Category() {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        const fetchCategories = async () => await getCategories();
+        const fetchCategories = async () => await getAllCategories();
         fetchCategories().then((result) => setCategories(result));
     }, []);
 
