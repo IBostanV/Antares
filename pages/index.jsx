@@ -34,6 +34,7 @@ function Home() {
                 {categories?.map(category => (
                     <SwiperSlide
                         role='button'
+                        key={category.catId}
                         onClick={() => selectCategory(category.catId)}
                     >
                         {category.name}
