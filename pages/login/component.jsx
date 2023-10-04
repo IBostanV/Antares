@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useRouter} from 'next/router';
 import {
   Button, Col, Container, Form, InputGroup, Row,

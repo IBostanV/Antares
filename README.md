@@ -10,7 +10,7 @@ UI for the Play-Quiz Application
 
 #Enhancements
 <ul>PQ-19 [FE] Improve Application func to use common Layout
-    <li><i>Component</i> in <b>_app.jsx</b> basically represents <b>index.jsx</b> component</li>
+    <li><i>Component</i> in <b>_app.jsx</b> basically represents the current page component</li>
     <li>props from <i>getServerSideProps()</i> in <b>index.jsx</b> are used as <i>pageProps</i> in <b>_app.jsx</b></li>
 </ul>
 

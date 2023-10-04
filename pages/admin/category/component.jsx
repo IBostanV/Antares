@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
 import {toast} from "react-toastify";
 
-function Category() {
+const Category = () => {
     const name = useRef();
     const parent = useRef();
     const visible = useRef();

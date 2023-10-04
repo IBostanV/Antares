@@ -5,7 +5,7 @@ import Question from './question';
 import GlossaryType from "./glossary-type";
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
 
-function Admin() {
+const Admin = () => {
     return (
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
             <Row>
