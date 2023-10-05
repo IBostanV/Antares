@@ -2,79 +2,54 @@ import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import {Button, Col, Row, Table} from "react-bootstrap";
 import getQuestionTypes from "../../../api/question/get-types";
-import getCategories from "../../../api/category/get-all";
 import getQuestionAttributes from "../../../api/question/get-attributes";
 import getQuestionLanguages from "../../../api/question/get-languages";
 import saveQuestion from "../../../api/question/save";
 import getQuestions from "../../../api/question/get-all";
-import getByCategoryGlossaries from "../../../api/glossary/get-all";
 import {toast} from "react-toastify";
+import {useDebounce} from "primereact/hooks";
 
-export default function Glossary() {
+export default function Glossary({categories, glossaries, setGlossaryFilter}) {
     const [types, setTypes] = useState([]);
     const [languages, setLanguages] = useState([]);
     const [questions, setQuestions] = useState([]);
-    const [glossaries, setGlossaries] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [attributesSet, setAttributesSet] = useState([]);
 
     const [type, setType] = useState('');
     const [topic, setTopic] = useState('');
     const [answer, setAnswer] = useState('');
-    const [glossary, setGlossary] = useState({});
-    const [content, setContent] = useState('');
+    const [glossary, setGlossary] = useState(glossaries[0]);
     const [priority, setPriority] = useState(1);
     const [attributes, setAttributes] = useState([]);
     const [translations, setTranslations] = useState({});
     const [isActive, setIsActive] = useState(false);
     const [complexityLevel, setComplexityLevel] = useState(1);
-    const [category, setCategory] = useState({catId: 1});
+    const [category, setCategory] = useState({catId: 2});
     const [answerTranslations, setAnswerTranslations] = useState({});
+    const [content, debouncedContent, setContent] = useDebounce('',500);
 
     useEffect(() => {
         const fetchQuestionTypes = async () => await getQuestionTypes()
-
-        fetchQuestionTypes().then(values => {
-            setTypes(values);
-        });
+        fetchQuestionTypes().then(values => setTypes(values));
     }, []);
 
     useEffect(() => {
         const fetchQuestionLanguages = async () => await getQuestionLanguages()
-
         fetchQuestionLanguages().then(values => setLanguages(values));
     }, []);
 
     useEffect(() => {
         const fetchQuestionAttributes = async () => await getQuestionAttributes()
-
-        fetchQuestionAttributes().then(values => {
-            setAttributesSet(values);
-        });
-    }, []);
-
-    useEffect(() => {
-        const fetchCategories = async () => await getCategories();
-        fetchCategories().then((categories) => {
-            setCategories(categories);
-        });
+        fetchQuestionAttributes().then(values => setAttributesSet(values));
     }, []);
 
     useEffect(() => {
         const fetchQuestions = async () => await getQuestions()
-
-        fetchQuestions().then(questions => {
-            setQuestions(questions);
-        })
+        fetchQuestions().then(questions => setQuestions(questions));
     }, []);
 
     useEffect(() => {
-        const fetchGlossaries = async () => await getByCategoryGlossaries(category.catId || 1)
-
-        fetchGlossaries().then(glossaries => {
-            setGlossaries(glossaries);
-            setGlossary(glossaries?.[0]);
-        })
+        setGlossaryFilter(category.catId);
     }, [category.catId]);
 
     const handleTopic = (event) => setTopic(event.target.value);
@@ -133,15 +108,14 @@ export default function Glossary() {
             });
 
         if (response) {
+            setQuestions(values => [...values, response.data]);
             toast.success('Question successfully saved');
-
-            setQuestions(values => [...values, response.data])
         }
     }
 
     return (
         <div>
-            <Form className={'border'}>
+            <Form className={'shadowed'}>
                 <h3 className={'text-center'}>Add Question</h3>
                 <hr/>
 
@@ -149,11 +123,9 @@ export default function Glossary() {
                     <Form.Label column sm={3} className={'text-end'}>Topic</Form.Label>
                     <Col sm={8}>
                         <Form.Control
-                            placeholder="Topic"
-                            aria-label="Topic"
-                            aria-describedby="basic-addon1"
-                            onChange={handleTopic}
                             value={topic}
+                            placeholder="Topic"
+                            onChange={handleTopic}
                         />
                     </Col>
                 </Form.Group>
@@ -165,12 +137,15 @@ export default function Glossary() {
                             min={1}
                             max={10}
                             type={'number'}
-                            placeholder="Priority"
-                            aria-label="Priority"
-                            aria-describedby="basic-addon1"
-                            onChange={handlePriority}
                             value={priority}
+                            isValid={priority}
+                            isInvalid={!priority}
+                            placeholder="Priority"
+                            onChange={handlePriority}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            Set <span className='fw-bold'>priority</span>
+                        </Form.Control.Feedback>
                     </Col>
                 </Form.Group>
 
@@ -181,12 +156,15 @@ export default function Glossary() {
                             min={1}
                             max={10}
                             type={'number'}
-                            placeholder="Complexity level"
-                            aria-label="Complexity-level"
-                            aria-describedby="basic-addon1"
-                            onChange={handleComplexityLevel}
                             value={complexityLevel}
+                            isValid={complexityLevel}
+                            isInvalid={!complexityLevel}
+                            placeholder="Complexity level"
+                            onChange={handleComplexityLevel}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            Set <span className='fw-bold'>complexity level</span>
+                        </Form.Control.Feedback>
                     </Col>
                 </Form.Group>
 
@@ -194,19 +172,22 @@ export default function Glossary() {
                     <Form.Label column sm={3} className={'text-end'}>Content</Form.Label>
                     <Col sm={8}>
                         <Form.Control
-                            placeholder="Content"
-                            aria-label="Content"
-                            aria-describedby="basic-addon1"
-                            onChange={handleContent}
                             value={content}
+                            isValid={content}
+                            isInvalid={!content}
+                            placeholder="Content"
+                            onChange={handleContent}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            Set <span className='fw-bold'>content</span>
+                        </Form.Control.Feedback>
                     </Col>
                 </Form.Group>
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Attributes</Form.Label>
                     <Col sm={8}>
-                        <Form.Select aria-label="Type" onChange={handleAttributes}>
+                        <Form.Select onChange={handleAttributes}>
                             {attributesSet?.map(item => (
                                 <option value={item} key={item}>{item}</option>
                             ))}
@@ -217,11 +198,18 @@ export default function Glossary() {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                     <Col sm={8}>
-                        <Form.Select aria-label="Category" onChange={handleCategory}>
+                        <Form.Select
+                            isValid={category.catId}
+                            isInvalid={!category.catId}
+                            onChange={handleCategory}
+                        >
                             {categories?.map((category, index) => (
                                 <option value={index} key={category.catId}>{category.name}</option>
                             ))}
                         </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            Set <span className='fw-bold'>category</span>
+                        </Form.Control.Feedback>
                     </Col>
                 </Form.Group>
 
@@ -229,21 +217,31 @@ export default function Glossary() {
                     <Form.Label column sm={3} className={'text-end'}>Answer</Form.Label>
                     <Col sm={4}>
                         <Form.Control
-                            placeholder="Answer"
-                            aria-label="Answer"
-                            aria-describedby="basic-addon1"
-                            onChange={handleAnswer}
                             value={answer}
+                            isValid={answer}
+                            isInvalid={!answer && !glossary?.termId}
+                            placeholder="Answer"
+                            onChange={handleAnswer}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            Set <span className='fw-bold'>answer</span>
+                        </Form.Control.Feedback>
                     </Col>
                     <Form.Label column sm={1} className={'text-end'}>By Glossary</Form.Label>
                     <Col sm={3}>
-                        <Form.Select aria-label="Answer" onChange={handleGlossary}>
+                        <Form.Select
+                            onChange={handleGlossary}
+                            isInvalid={!glossary?.termId && !answer}
+                            isValid={glossary?.termId}
+                        >
                             <option value={null} key={null}></option>
                             {glossaries?.map(glossary => (
                                 <option value={glossary.termId} key={glossary.termId}>{handleAttributeChange(glossary)}</option>
                             ))}
                         </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            Select <span className='fw-bold'>glossary</span>
+                        </Form.Control.Feedback>
                     </Col>
                 </Form.Group>
 
@@ -257,8 +255,6 @@ export default function Glossary() {
                                     <Col sm={10}>
                                         <Form.Control
                                             placeholder={item.name}
-                                            aria-label={item.name}
-                                            aria-describedby="basic-addon1"
                                             onChange={(e) => handleAnswerTranslation(e, item.langId)}
                                         />
                                     </Col>
@@ -271,11 +267,19 @@ export default function Glossary() {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
                     <Col sm={8}>
-                        <Form.Select aria-label="Type" onChange={(event) => setType((event.target.value))}>
+                        <Form.Select
+                            isValid={type}
+                            isInvalid={!type}
+                            onChange={(event) => setType((event.target.value))}
+                        >
+                            <option value={null} key={null}></option>
                             {types?.map(item => (
                                 <option value={item} key={item}>{item}</option>
                             ))}
                         </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            Select <span className='fw-bold'>type</span>
+                        </Form.Control.Feedback>
                     </Col>
                 </Form.Group>
 
@@ -288,8 +292,6 @@ export default function Glossary() {
                                 <Col sm={10}>
                                     <Form.Control
                                         placeholder={item.name}
-                                        aria-label={item.name}
-                                        aria-describedby="basic-addon1"
                                         onChange={(e) => handleTranslation(e, item.langId)}
                                     />
                                 </Col>
@@ -311,11 +313,17 @@ export default function Glossary() {
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={3}></Form.Label>
                     <Col sm={8}>
-                        <Button variant={'primary'} onClick={save}>Save</Button>
+                        <Button
+                            onClick={save}
+                            variant={'primary'}
+                            disabled={!content || (!answer && !glossary?.termId) || !type}
+                        >
+                            Save
+                        </Button>
                     </Col>
                 </Form.Group>
             </Form>
-            <div className={'border'}>
+            <div className={'shadowed'}>
                 <h3 className={'text-center'}>Questions</h3>
                 <hr/>
                 <Table striped bordered variant='dark'>

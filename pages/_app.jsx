@@ -8,6 +8,7 @@ import 'swiper/swiper-bundle.css';
 
 function Application({Component, pageProps}) {
     const {isLoggedIn} = pageProps;
+
     return (
         <Layout isLoggedIn={isLoggedIn}>
             <Component {...pageProps} />

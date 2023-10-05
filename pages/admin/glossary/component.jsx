@@ -1,59 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import getCategories from "../../../api/category/get-all";
+import React, {useState} from 'react';
 import saveGlossary from "../../../api/glossary/save";
-import getByCategoryGlossaries from "../../../api/glossary/get-all";
 import Form from 'react-bootstrap/Form';
-import {Button, Image, Row, Col, Table} from "react-bootstrap";
-import getGlossaryTypes from "../../../api/glossary/get-types";
+import {Button, Col, Image, Row, Table} from "react-bootstrap";
 import {toast} from "react-toastify";
 
-export default function Glossary() {
-    const [glossaries, setGlossaries] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [glossaryTypes, setGlossaryTypes] = useState([]);
-
+export default function Glossary({categories, glossaries, setGlossaries, setGlossaryFilter, glossaryTypes}) {
     const [addType, setAddType] = useState();
     const [addParent, setAddParent] = useState();
     const [addKey, setAddKey] = useState('');
     const [addValue, setAddValue] = useState('');
     const [addAttachment, setAddAttachment] = useState();
-    const [addCategory, setAddCategory] = useState({});
+    const [addCategory, setAddCategory] = useState({catId: 2});
     const [addIsActive, setAddIsActive] = useState(false);
 
-    const [glossariesBy, setGlossariesBy] = useState(1);
     const [blob, setBlob] = useState(null);
     const [item, setItem] = useState({
-        key: '',
-        value: '',
-        isActive: false,
-        type: {
+        termId: null, key: '', value: '', isActive: false, type: {
             name: ''
-        },
-        category: {
+        }, category: {
             catId: ''
         }
     });
-
-    useEffect(() => {
-        const fetchCategories = async () => await getCategories();
-        fetchCategories().then((categories) => {
-            setCategories(categories);
-        });
-    }, []);
-
-    useEffect(() => {
-        const fetchGlossaryTypes = async () => await getGlossaryTypes();
-        fetchGlossaryTypes().then((types) => {
-            setGlossaryTypes(types);
-        });
-    }, []);
-
-    useEffect(() => {
-        const fetchCategoryGlossaries = async () => await getByCategoryGlossaries(glossariesBy);
-        fetchCategoryGlossaries().then((glossaries) => {
-            setGlossaries(glossaries);
-        });
-    }, [glossariesBy]);
 
     const handleKey = (event) => setAddKey(event.target.value);
     const handleValue = (event) => setAddValue(event.target.value)
@@ -67,36 +34,35 @@ export default function Glossary() {
 
     const handleType = (event) => {
         const type = glossaryTypes[event.target.value];
-        setAddType({id: type.id, name: type.name});
+        if (type) {
+            setAddType({id: type.id, name: type.name});
+        } else {
+            setAddType(undefined);
+        }
     }
 
     const handleTypeEdit = (event) => {
         const value = event.target.value || null;
         setItem((values) => ({
-            ...values,
-            type: value && {id: value}
+            ...values, type: value && {id: value}
         }));
     }
 
     const save = async () => {
-        const response = await saveGlossary(
-            {
-                key: addKey,
-                type: addType,
-                value: addValue,
-                parent: addParent,
-                isActive: addIsActive,
-                categoryId: addCategory.catId
-            }, addAttachment);
+        const response = await saveGlossary({
+            key: addKey,
+            type: addType,
+            value: addValue,
+            parent: addParent,
+            isActive: addIsActive,
+            categoryId: addCategory.catId
+        }, addAttachment);
         if (response) {
             toast.success('Glossary successfully saved');
 
-            setGlossaries(values => [...values,
-                {
-                    ...response.data,
-                    categoryName: addCategory.name,
-                    categoryId: addCategory.catId
-                }]);
+            setGlossaries(values => [...values, {
+                ...response.data, categoryName: addCategory.name, categoryId: addCategory.catId
+            }]);
         }
     }
 
@@ -111,8 +77,7 @@ export default function Glossary() {
 
     const edit = async () => {
         const response = await saveGlossary({
-            ...item,
-            attachment: null
+            ...item, attachment: null
         }, typeof item.attachment === 'string' ? null : item.attachment);
         if (response) {
             toast.success('Category successfully edited');
@@ -125,15 +90,13 @@ export default function Glossary() {
         }
     }
 
-    return (
-        <div>
-            <div className={'d-flex border'}>
-                <div className={'col-5 border'}>
+    return (<div>
+            <div className={'d-flex shadowed'}>
+                <div className={'col-5 shadowed'}>
                     <h3 className={'text-center'}>Glossaries by</h3>
-                    <Form.Select aria-label="Category" onChange={(event) => setGlossariesBy(event.target.value)}>
-                    {categories?.map(category => (
-                        <option value={category.catId} key={category.catId}>{category.name}</option>
-                    ))}
+                    <Form.Select onChange={(event) => setGlossaryFilter(event.target.value)}>
+                        {categories?.map(category => (
+                            <option value={category.catId} key={category.catId}>{category.name}</option>))}
                     </Form.Select>
                     <hr/>
                     <Table striped bordered variant='dark'>
@@ -148,7 +111,8 @@ export default function Glossary() {
                         </thead>
                         <tbody>
                         {glossaries?.map((glossary) => (
-                            <tr onClick={() => setItemToEdit(glossary)} key={glossary.key + glossary.value} role="button">
+                            <tr onClick={() => setItemToEdit(glossary)} key={glossary.key + glossary.value}
+                                role="button">
                                 <td>{glossary.key}</td>
                                 <td>{glossary.value}</td>
                                 <td>{glossary.categoryName}</td>
@@ -158,25 +122,27 @@ export default function Glossary() {
                                         disabled
                                         checked={glossary.isActive}
                                     /></td>
-                            </tr>
-                        ))}
+                            </tr>))}
                         </tbody>
                     </Table>
                 </div>
-                <div className={'col-7 border'}>
-                    <Form className={'border mb-2 pb-4'}>
+                <div className={'col-7 shadowed'}>
+                    <Form className={'shadowed mb-2 pb-4'}>
                         <h3 className={'text-center'}>Add glossary</h3>
                         <hr/>
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Key</Form.Label>
                             <Col sm={8}>
                                 <Form.Control
-                                    placeholder="Key"
-                                    aria-label="Key"
-                                    aria-describedby="basic-addon1"
-                                    onChange={handleKey}
                                     value={addKey}
+                                    isValid={addKey}
+                                    isInvalid={!addKey}
+                                    placeholder="Key"
+                                    onChange={handleKey}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    Set <span className='fw-bold'>key</span>
+                                </Form.Control.Feedback>
                             </Col>
                         </Form.Group>
 
@@ -184,34 +150,42 @@ export default function Glossary() {
                             <Form.Label column sm={3} className={'text-end'}>Value</Form.Label>
                             <Col sm={8}>
                                 <Form.Control
-                                    placeholder="Value"
-                                    aria-label="Value"
-                                    aria-describedby="basic-addon1"
-                                    onChange={handleValue}
                                     value={addValue}
+                                    isValid={addValue}
+                                    isInvalid={!addValue}
+                                    placeholder="Value"
+                                    onChange={handleValue}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    Set <span className='fw-bold'>value</span>
+                                </Form.Control.Feedback>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                             <Col sm={8}>
-                                <Form.Select aria-label="Category" onChange={handleCategory}>
+                                <Form.Select
+                                    isValid={addCategory.catId}
+                                    isInvalid={!addCategory.catId}
+                                    onChange={handleCategory}
+                                >
                                     {categories?.map((category, index) => (
-                                        <option value={index} key={category.catId}>{category.name}</option>
-                                    ))}
+                                        <option value={index} key={category.catId}>{category.name}</option>))}
                                 </Form.Select>
+                                <Form.Control.Feedback type="invalid">
+                                    Select <span className='fw-bold'>category</span>
+                                </Form.Control.Feedback>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
                             <Col sm={8}>
-                                <Form.Select aria-label="Category" onChange={handleType}>
+                                <Form.Select onChange={handleType}>
                                     <option value={null}></option>
                                     {glossaryTypes?.map((type, index) => (
-                                        <option value={index} key={type.name}>{type.name}</option>
-                                    ))}
+                                        <option value={index} key={type.name}>{type.name}</option>))}
                                 </Form.Select>
                             </Col>
                         </Form.Group>
@@ -219,11 +193,10 @@ export default function Glossary() {
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Parent</Form.Label>
                             <Col sm={8}>
-                                <Form.Select aria-label="Parent" onChange={handleParent}>
+                                <Form.Select onChange={handleParent}>
                                     <option value={null}></option>
-                                    {glossaries?.map(glossary => (
-                                        <option value={glossary.termId} key={glossary.termId}>{glossary.value}</option>
-                                    ))}
+                                    {glossaries?.map(glossary => (<option value={glossary.termId}
+                                                                          key={glossary.termId}>{glossary.value}</option>))}
                                 </Form.Select>
                             </Col>
                         </Form.Group>
@@ -232,11 +205,9 @@ export default function Glossary() {
                             <Form.Label column sm={3} className={'text-end'}>Attachment</Form.Label>
                             <Col sm={8}>
                                 <Form.Control
-                                    placeholder="Attachment"
-                                    aria-label="Attachment"
-                                    aria-describedby="basic-addon1"
-                                    onChange={handleAttachment}
                                     type={'file'}
+                                    placeholder="Attachment"
+                                    onChange={handleAttachment}
                                 />
                             </Col>
                         </Form.Group>
@@ -254,7 +225,13 @@ export default function Glossary() {
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3}></Form.Label>
                             <Col sm={8}>
-                                <Button variant={'primary'} onClick={save}>Save</Button>
+                                <Button
+                                    onClick={save}
+                                    variant={'primary'}
+                                    disabled={!addKey || !addValue || !addCategory}
+                                >
+                                    Save
+                                </Button>
                             </Col>
                         </Form.Group>
                     </Form>
@@ -265,12 +242,15 @@ export default function Glossary() {
                         <Form.Label column sm={3} className={'text-end'}>Key</Form.Label>
                         <Col sm={8}>
                             <Form.Control
-                                placeholder="Key"
-                                aria-label="Key"
-                                aria-describedby="basic-addon1"
-                                onChange={(event) => setItem((values) => ({...values, key: event.target.value}))}
                                 value={item.key}
+                                isValid={item.key}
+                                isInvalid={item.termId && !item.key}
+                                placeholder="Key"
+                                onChange={(event) => setItem((values) => ({...values, key: event.target.value}))}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                Set <span className='fw-bold'>key</span>
+                            </Form.Control.Feedback>
                         </Col>
                     </Form.Group>
 
@@ -278,25 +258,27 @@ export default function Glossary() {
                         <Form.Label column sm={3} className={'text-end'}>Value</Form.Label>
                         <Col sm={8}>
                             <Form.Control
-                                placeholder="Value"
-                                aria-label="Value"
-                                aria-describedby="basic-addon1"
-                                onChange={(event) => setItem((values) => ({...values, value: event.target.value}))}
                                 value={item.value}
+                                isValid={item.value}
+                                isInvalid={item.termId && !item.value}
+                                placeholder="Value"
+                                onChange={(event) => setItem((values) => ({...values, value: event.target.value}))}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                Set <span className='fw-bold'>value</span>
+                            </Form.Control.Feedback>
                         </Col>
                     </Form.Group>
 
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                         <Col sm={8}>
-                            <Form.Select aria-label="Category" value={item.categoryId} onChange={(event) => setItem((values) => ({
-                                ...values,
-                                category: {catId: event.target.value}
-                            }))}>
+                            <Form.Select value={item.categoryId}
+                                         onChange={(event) => setItem((values) => ({
+                                             ...values, category: {catId: event.target.value}
+                                         }))}>
                                 {categories?.map(category => (
-                                    <option value={category.catId} key={category.catId}>{category.name}</option>
-                                ))}
+                                    <option value={category.catId} key={category.catId}>{category.name}</option>))}
                             </Form.Select>
                         </Col>
                     </Form.Group>
@@ -304,11 +286,11 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
                         <Col sm={8}>
-                            <Form.Select aria-label="Type" value={item.type?.id || {id: null}} onChange={handleTypeEdit}>
+                            <Form.Select value={item.type?.id || {id: null}}
+                                         onChange={handleTypeEdit}>
                                 <option value={null}></option>
                                 {glossaryTypes?.map(type => (
-                                    <option value={type.id} key={type.name}>{type.name}</option>
-                                ))}
+                                    <option value={type.id} key={type.name}>{type.name}</option>))}
                             </Form.Select>
                         </Col>
                     </Form.Group>
@@ -316,11 +298,12 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Parent</Form.Label>
                         <Col sm={8}>
-                            <Form.Select aria-label="Parent" onChange={(event) => setItem((values) => ({...values, parent: event.target.value}))}>
+                            <Form.Select onChange={(event) => setItem((values) => ({
+                                ...values, parent: event.target.value
+                            }))}>
                                 <option value={null}></option>
                                 {glossaries?.map(glossary => (
-                                    <option value={glossary.termId} key={glossary.termId}>{glossary.value}</option>
-                                ))}
+                                    <option value={glossary.termId} key={glossary.termId}>{glossary.value}</option>))}
                             </Form.Select>
                         </Col>
                     </Form.Group>
@@ -340,11 +323,8 @@ export default function Glossary() {
                         <Col sm={8}>
                             <Form.Control
                                 placeholder="Attachment"
-                                aria-label="Attachment"
-                                aria-describedby="basic-addon1"
                                 onChange={(event) => setItem((values) => ({
-                                    ...values,
-                                    attachment: event.target.files[0]
+                                    ...values, attachment: event.target.files[0]
                                 }))}
                                 name={'Attachment'}
                                 type={'file'}
@@ -355,18 +335,23 @@ export default function Glossary() {
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3} className={'text-end'}>Preview</Form.Label>
                         <Col sm={8}>
-                        	{blob && <Image rounded src={blob} fluid/>}
+                            {blob && <Image rounded src={blob} fluid/>}
                         </Col>
                     </Form.Group>
 
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3}></Form.Label>
                         <Col sm={8}>
-                            <Button variant={'primary'} onClick={edit}>Edit</Button>
+                            <Button
+                                onClick={edit}
+                                variant={'primary'}
+                                disabled={!item.key || !item.value}
+                            >
+                                Edit
+                            </Button>
                         </Col>
                     </Form.Group>
                 </div>
             </div>
-        </div>
-    );
+        </div>);
 }

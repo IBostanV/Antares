@@ -1,36 +1,82 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Glossary from './glossary';
 import Category from './category';
 import Question from './question';
 import GlossaryType from "./glossary-type";
 import {Col, Nav, Row, Tab} from 'react-bootstrap';
+import {getAllCategories} from "../../api/category";
+import getByCategoryGlossaries from "../../api/glossary/get-all";
+import getGlossaryTypes from "../../api/glossary/get-types";
 
 const Admin = () => {
+    const [categories, setCategories] = useState([]);
+    const [glossaries, setGlossaries] = useState([]);
+    const [glossaryTypes, setGlossaryTypes] = useState([]);
+    const [glossaryFilter, setGlossaryFilter] = useState(2);
+
+    useEffect(() => {
+        const fetchCategories = async () => await getAllCategories();
+        fetchCategories().then(result => setCategories(result));
+    }, []);
+
+    useEffect(() => {
+        const fetchGlossaries = async () => await getByCategoryGlossaries(glossaryFilter);
+        fetchGlossaries().then(result => setGlossaries(result));
+    }, [glossaryFilter]);
+
+    useEffect(() => {
+        const fetchGlossaryTypes = async () => await getGlossaryTypes();
+        fetchGlossaryTypes().then((result) => setGlossaryTypes(result));
+    }, []);
+
     return (
-        <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+        <Tab.Container id="left-tabs-example" defaultActiveKey="category">
             <Row>
-                <Col sm={3}>
+                <Col sm={2}>
                     <Nav variant="pills" className="flex-column">
                         <Nav.Item>
-                            <Nav.Link eventKey="first">Categories</Nav.Link>
+                            <Nav.Link eventKey="category">Categories</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="second">Glossaries</Nav.Link>
+                            <Nav.Link eventKey="glosary">Glossaries</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="third">Glossary Type</Nav.Link>
+                            <Nav.Link eventKey="glossaryType">Glossary Type</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="fourth">Questions</Nav.Link>
+                            <Nav.Link eventKey="question">Questions</Nav.Link>
                         </Nav.Item>
                     </Nav>
                 </Col>
-                <Col sm={9}>
+                <Col sm={10}>
                     <Tab.Content>
-                        <Tab.Pane eventKey="first">{(<Category/>)}</Tab.Pane>
-                        <Tab.Pane eventKey="second">{(<Glossary/>)}</Tab.Pane>
-                        <Tab.Pane eventKey="third">{(<GlossaryType/>)}</Tab.Pane>
-                        <Tab.Pane eventKey="fourth">{(<Question/>)}</Tab.Pane>
+                        <Tab.Pane eventKey="category">
+                            {(<Category categories={categories}
+                                        setCategories={setCategories}
+                            />)}
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="glosary">
+                            {(<Glossary
+                                categories={categories}
+                                glossaries={glossaries}
+                                setGlossaries={setGlossaries}
+                                glossaryTypes={glossaryTypes}
+                                setGlossaryFilter={setGlossaryFilter}
+                            />)}
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="glossaryType">
+                            {(<GlossaryType
+                                glossaryTypes={glossaryTypes}
+                                setGlossaryTypes={setGlossaryTypes}
+                            />)}
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="question">
+                            {(<Question
+                                categories={categories}
+                                glossaries={glossaries}
+                                setGlossaryFilter={setGlossaryFilter}
+                            />)}
+                        </Tab.Pane>
                     </Tab.Content>
                 </Col>
             </Row>

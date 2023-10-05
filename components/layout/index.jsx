@@ -7,7 +7,7 @@ function Layout({ children, isLoggedIn }) {
   return (
     <>
       <Head>
-        <title>Main Page</title>
+        <title>Play Quiz</title>
       </Head>
 
       <div className="d-flex flex-column background">
