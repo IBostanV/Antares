@@ -3,6 +3,7 @@ import '../styles/index.scss';
 import PropTypes from 'prop-types';
 import Layout from '../components/layout';
 import {Slide, ToastContainer} from "react-toastify";
+import 'primereact/resources/themes/lara-dark-blue/theme.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'swiper/swiper-bundle.css';
 
@@ -18,6 +19,7 @@ function Application({Component, pageProps}) {
                             transition={Slide}
                             closeOnClick={true}
                             pauseOnHover={true}
+                            position='bottom-right'
                             hideProgressBar={false}/>
         </Layout>
     );

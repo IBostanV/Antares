@@ -1,0 +1,1 @@
+export default (source) => `data:image/jpeg;base64,${source}`;

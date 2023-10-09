@@ -11,7 +11,6 @@ function Home() {
 
     useEffect(() => {
         const fetchCategories = async () => await getAllCategories();
-
         fetchCategories().then((result) => setCategories(result));
     }, []);
 
@@ -46,10 +45,9 @@ function Home() {
 }
 
 export const getServerSideProps = async ({req, res}) => ({
-    props:
-        {
-            isLoggedIn: hasCookie('authorization', {req, res}),
-        },
+    props: {
+        isLoggedIn: hasCookie('authorization', {req, res}),
+    },
 });
 
 export default Home;

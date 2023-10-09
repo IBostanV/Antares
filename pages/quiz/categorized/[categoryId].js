@@ -6,6 +6,7 @@ import { hasCookie } from 'cookies-next';
 import { getCategorizedQuiz } from '../../../api/quiz';
 import getQuestionWithOptions from '../../../api/question/get-with-options';
 import saveUserQuiz from '../../../api/quiz/save';
+import base64Util from "../../../utils/base64Util";
 
 function Quiz() {
   const router = useRouter();
@@ -79,8 +80,6 @@ function Quiz() {
     fetchQuestionWithOptions().then((question) => setCurrentQuestion(question));
   };
 
-  const handleImage = (source) => `data:image/jpeg;base64,${source}`;
-
   return (
     <div className="d-flex h-100 flex-column">
       <h1 className="text-center">{spentTime}</h1>
@@ -97,7 +96,7 @@ function Quiz() {
                 rounded
                 width={200}
                 height={150}
-                src={handleImage(answer?.glossaryAttachment)}
+                src={base64Util(answer?.glossaryAttachment)}
               />
               <Button
                 key={answer.content}
@@ -114,12 +113,12 @@ function Quiz() {
   );
 }
 
-export const getServerSideProps = async ({ req, res }) => ({
+export const getServerSideProps = async ({req, res}) => ({
   props:
-        {
-          hostUrl: process.env.NEXT_PUBLIC_BE_HOST_URL,
-          isLoggedIn: hasCookie('authorization', { req, res }),
-        },
+      {
+        hostUrl: process.env.NEXT_PUBLIC_BE_HOST_URL,
+        isLoggedIn: hasCookie('authorization', {req, res}),
+      },
 });
 
 export default Quiz;
