@@ -3,6 +3,7 @@ import saveGlossary from "../../../api/glossary/save";
 import Form from 'react-bootstrap/Form';
 import {Button, Col, Image, Row, Table} from "react-bootstrap";
 import {toast} from "react-toastify";
+import base64Util from "../../../utils/base64Util";
 
 export default function Glossary({categories, glossaries, setGlossaries, setGlossaryFilter, glossaryTypes}) {
     const [addType, setAddType] = useState();
@@ -69,7 +70,7 @@ export default function Glossary({categories, glossaries, setGlossaries, setGlos
     const setItemToEdit = async (item) => {
         setItem(item);
         if (item.attachment) {
-            setBlob(`data:image/jpeg;base64,${item.attachment}`);
+            setBlob(base64Util(item.attachment));
         } else {
             setBlob(null);
         }

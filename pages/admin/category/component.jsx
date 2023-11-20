@@ -5,7 +5,7 @@ import {Button, Col, Row, Table} from "react-bootstrap";
 import {toast} from "react-toastify";
 
 const Category = ({categories, setCategories}) => {
-    const [name, setName] = useState();
+    const [name, setName] = useState('');
 
     const parent = useRef();
     const visible = useRef();
@@ -26,7 +26,7 @@ const Category = ({categories, setCategories}) => {
             const parentName = parent.current.options[index].textContent;
             setCategories([...categories, {...response.data, parentName}]);
 
-            setName(null);
+            setName('');
             parent.current.value = null;
         }
     }

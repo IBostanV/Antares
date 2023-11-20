@@ -1,6 +1,6 @@
 @import "~bootstrap/scss/bootstrap";
 
-html, body {
+html, body, #__next {
   height: 100%;
 }
 
@@ -9,20 +9,15 @@ body {
   overflow-x: hidden;
 }
 
-p {
-  color: #FFF;
-}
-
-span {
-  color: #FFF;
-}
-
+p,
+span,
 div {
   color: #FFF;
 }
 
-#__next {
-  height: 100%;
+ul {
+  margin-bottom: initial;
+  padding-left: initial;
 }
 
 .background {
@@ -32,7 +27,7 @@ div {
 
 .index {
   background-color: #000;
-  box-shadow: 0 -20px 20px 20px white;
+  box-shadow: 0 1px 3px 0 #0d6efd !important;
   display: flex;
   justify-content: space-between;
   padding: 15px 25px;
@@ -103,5 +98,5 @@ div {
 }
 
 .shadowed {
-  box-shadow: -1px 0rem 1rem rgb(255, 255, 255) !important;
+  box-shadow: 0 1px 3px 0 #0d6efd !important;
 }

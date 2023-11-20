@@ -18,7 +18,7 @@ export default function Glossary({categories, glossaries, setGlossaryFilter}) {
     const [type, setType] = useState('');
     const [topic, setTopic] = useState('');
     const [answer, setAnswer] = useState('');
-    const [glossary, setGlossary] = useState(glossaries[0]);
+    const [glossary, setGlossary] = useState(glossaries?.[0]);
     const [priority, setPriority] = useState(1);
     const [attributes, setAttributes] = useState([]);
     const [translations, setTranslations] = useState({});
@@ -99,7 +99,7 @@ export default function Glossary({categories, glossaries, setGlossaryFilter}) {
                 isActive,
                 priority,
                 complexityLevel,
-                attributes: [attributes],
+                attributes: Array.isArray(attributes) ? attributes : [attributes],
                 categoryId: category.catId,
                 categoryName: category.name,
                 answers: [{content: answer, termId: glossary.termId}],

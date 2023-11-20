@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Navbar from '../navbar';
+import PropTypes from "prop-types";
 
 /* eslint-disable-next-line */
 function Layout({ children, isLoggedIn }) {
@@ -16,6 +17,11 @@ function Layout({ children, isLoggedIn }) {
       </div>
     </>
   );
+}
+
+Layout.propTypes = {
+    children: PropTypes.any,
+    isLoggedIn: PropTypes.bool
 }
 
 export default Layout;

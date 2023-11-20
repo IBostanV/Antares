@@ -15,3 +15,8 @@ export const GLOSSARY_PATH = API + '/glossary';
 export const QUESTION_PATH = API + '/question';
 
 export const USER_HISTORY_PATH = API + '/user-history';
+
+export const USER_PATH = API + '/user';
+
+export const CHANGE_PASSWORD_URL = `${USER_PATH}/change-password`;
+export const VERIFY_OLD_PASSWORD_URL = `${USER_PATH}/verify-password`;

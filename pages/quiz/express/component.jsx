@@ -5,8 +5,8 @@ import saveUserQuiz from "../../../api/quiz/save";
 import {useRouter} from 'next/router';
 import moment from 'moment';
 import getQuestionWithOptions from "../../../api/question/get-with-options";
-import {useInterval} from "primereact/hooks";
 import {Knob} from 'primereact/knob';
+import base64Util from "../../../utils/base64Util";
 
 function ExpressQuiz() {
     const router = useRouter();
@@ -80,10 +80,6 @@ function ExpressQuiz() {
         fetchQuestionWithOptions().then(question => setCurrentQuestion(question));
     }
 
-    const handleImage = (source) => {
-        return `data:image/jpeg;base64,${source}`;
-    }
-
     return (
         <div className="d-flex h-100 flex-column">
             <Knob
@@ -105,7 +101,7 @@ function ExpressQuiz() {
                                 rounded
                                 width={200}
                                 height={150}
-                                src={handleImage(answer?.glossaryAttachment)}
+                                src={base64Util(answer?.glossaryAttachment)}
                             />
                             <Button
                                 key={answer.content}
