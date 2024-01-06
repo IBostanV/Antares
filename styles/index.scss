@@ -1,12 +1,33 @@
 @import "~bootstrap/scss/bootstrap";
 
+@font-face {
+  font-family: 'Montserrat-Medium';
+  src: local('Montserrat-Medium'), url('/fonts/Montserrat/Montserrat-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'TimeBurner';
+  src: local('TimeBurner'), url('/fonts/TimeBurner/Timeburner-xJB8.ttf');
+}
+
 html, body, #__next {
   height: 100%;
+  font-family: 'Montserrat-Medium', sans-serif;
 }
 
 body {
-  background-color: black;
+  background: url('/resources/bg.jpg') no-repeat fixed center;
+  background-size: cover;
+  backdrop-filter: blur(3px);
   overflow-x: hidden;
+}
+
+main {
+  background-color: #000000ad;
+  box-shadow: 0 0 15px black;
+  height: auto;
+  min-height: 100%;
+  padding: 20px;
 }
 
 p,
@@ -26,11 +47,10 @@ ul {
 }
 
 .index {
-  background-color: #000;
-  box-shadow: 0 1px 3px 0 #0d6efd !important;
+  background: linear-gradient(170deg, black, #2b2b2b);
   display: flex;
   justify-content: space-between;
-  padding: 15px 25px;
+  padding: 25px 25px;
   width: 100%;
 }
 
@@ -46,17 +66,8 @@ ul {
   }
 }
 
-.swiper {
-  width: 100%;
-  height: 300px;
-  margin: 50px auto;
-}
-
 .swiper-slide {
-  background: #f1f1f1;
-  color: #000;
   text-align: center;
-  line-height: 300px;
 }
 
 .login-input {
@@ -69,7 +80,7 @@ ul {
 }
 
 .highlight {
-  transition: transform 0.3s ease;
+  transition: transform 0.300ms ease;
   &:hover {
     text-decoration: underline !important;
     transform: scale(1.8);
@@ -98,5 +109,18 @@ ul {
 }
 
 .shadowed {
-  box-shadow: 0 1px 3px 0 #0d6efd !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.input {
+  background-color: #0000;
+  backdrop-filter: blur(20px);
+  color: #FFFFFF;
+  outline: none;
+  border: 1px solid #728993;
+  padding: 10px 15px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
