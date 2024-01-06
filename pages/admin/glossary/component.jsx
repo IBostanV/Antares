@@ -164,6 +164,17 @@ export default function Glossary({categories, glossaries, setGlossaries, setGlos
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3">
+                            <Form.Label column sm={3} className={'text-end'}>Value type</Form.Label>
+                            <Col sm={8}>
+                                <Form.Select onChange={handleType}>
+                                    <option value={null}></option>
+                                    {glossaryTypes?.map((type, index) => (
+                                        <option value={index} key={type.name}>{type.name}</option>))}
+                                </Form.Select>
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
                             <Col sm={8}>
                                 <Form.Select
@@ -177,17 +188,6 @@ export default function Glossary({categories, glossaries, setGlossaries, setGlos
                                 <Form.Control.Feedback type="invalid">
                                     Select <span className='fw-bold'>category</span>
                                 </Form.Control.Feedback>
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row} className="mb-3">
-                            <Form.Label column sm={3} className={'text-end'}>Type</Form.Label>
-                            <Col sm={8}>
-                                <Form.Select onChange={handleType}>
-                                    <option value={null}></option>
-                                    {glossaryTypes?.map((type, index) => (
-                                        <option value={index} key={type.name}>{type.name}</option>))}
-                                </Form.Select>
                             </Col>
                         </Form.Group>
 

@@ -13,7 +13,7 @@ function Layout({ children, isLoggedIn }) {
 
       <div className="d-flex flex-column background">
         <Navbar isLoggedIn={isLoggedIn} />
-        <main className="h-100">{children}</main>
+        <main>{children}</main>
       </div>
     </>
   );

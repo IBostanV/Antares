@@ -4,6 +4,8 @@ import {Swiper, SwiperSlide} from "swiper/react";
 import {Autoplay, FreeMode, Keyboard, Mousewheel, Navigation, Pagination, Scrollbar} from "swiper/modules";
 import {getAllCategories} from "../api/category";
 import {useRouter} from "next/router";
+import {Card, Image} from "react-bootstrap";
+import base64Util from "../utils/base64Util";
 
 function Home() {
     const router = useRouter();
@@ -11,7 +13,9 @@ function Home() {
 
     useEffect(() => {
         const fetchCategories = async () => await getAllCategories();
-        fetchCategories().then((result) => setCategories(result));
+        fetchCategories().then((result) => {
+            setCategories(result);
+        });
     }, []);
 
     const selectCategory = (categoryId) => {
@@ -20,23 +24,29 @@ function Home() {
 
     return (
         <div>
+            <h2>Popular categories</h2>
             <Swiper
                 loop
                 freeMode={true}
-                slidesPerView={5}
+                slidesPerView={6}
                 spaceBetween={10}
-                autoplay={{delay: 2500, disableOnInteraction: false,}}
+                autoplay={{delay: 2500, disableOnInteraction: false, pauseOnMouseEnter: true}}
                 onSwiper={(swiper) => (window.swiper = swiper)}
                 mousewheel={{forceToAxis: false, sensitivity: 1, releaseOnEdges: true}}
                 modules={[Pagination, Mousewheel, Navigation, Scrollbar, Keyboard, Autoplay, FreeMode]}
             >
                 {categories?.map(category => (
                     <SwiperSlide
-                        role='button'
+                        className='cursor-pointer'
                         key={category.catId}
                         onClick={() => selectCategory(category.catId)}
                     >
-                        {category.name}
+                        <Card>
+                            <Card.Img variant="top" src={base64Util(category.attachment)} />
+                            <Card.ImgOverlay>
+                                <Card.Footer className='drop-filter'><h1>{category.name}</h1></Card.Footer>
+                            </Card.ImgOverlay>
+                        </Card>
                     </SwiperSlide>
                 ))}
             </Swiper>

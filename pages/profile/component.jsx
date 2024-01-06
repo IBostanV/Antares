@@ -48,7 +48,7 @@ function Profile() {
     useEffect(() => {
         const fetchUser = async () => await getCurrentUser();
         fetchUser().then((response) => {
-            const {birthday = [2000, 1, 1], avatar} = response;
+            const {birthday = [2000, 1, 1], avatar} = response ?? {};
             setUser({...response, birthday: new Date(birthday[0], birthday[1] - 1, birthday[2])});
             setPreviewAvatar(avatar && base64Util(avatar));
         });

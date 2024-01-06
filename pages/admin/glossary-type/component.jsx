@@ -24,7 +24,7 @@ function GlossaryType({glossaryTypes, setGlossaryTypes}) {
     }
 
     return (
-        <div className={'d-flex m-2 shadowed'}>
+        <div className={'d-flex m-2'}>
             <div className={'col-3 shadowed'}>
                 <Table striped bordered variant='dark'>
                     <thead>
@@ -50,7 +50,7 @@ function GlossaryType({glossaryTypes, setGlossaryTypes}) {
                     </tbody>
                 </Table>
             </div>
-            <Form className={'col-9'}>
+            <Form className={'col-9 shadowed'}>
                 <h3 className={'text-center'}>Glossary Types</h3>
                 <hr/>
                 <Form.Group as={Row} className="mb-3">

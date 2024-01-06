@@ -1,23 +1,39 @@
 import React, {useRef, useState} from 'react';
 import {saveCategory} from "../../../api/category";
 import Form from "react-bootstrap/Form";
-import {Button, Col, Row, Table} from "react-bootstrap";
+import {Button, Col, Image, Row, Table} from "react-bootstrap";
 import {toast} from "react-toastify";
+import base64Util from "../../../utils/base64Util";
 
 const Category = ({categories, setCategories}) => {
     const [name, setName] = useState('');
+    const [avatar, setAvatar] = useState(null);
+    const [previewAvatar, setPreviewAvatar] = useState(null);
 
     const parent = useRef();
     const visible = useRef();
 
     const handleName = (event) => setName(event.target.value);
 
+    const handleAvatar = (event) => {
+        const file = event.target.files[0];
+        setAvatar(file);
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewAvatar(reader.result);
+            reader.readAsDataURL(file);
+        } else if (!avatar) {
+            setPreviewAvatar(null);
+        }
+    };
+
     const submit = async () => {
         const response = await saveCategory({
             name,
             parentId: parent.current.value,
             visible: visible.current.checked
-        });
+        }, avatar);
 
         if (response) {
             toast.success('Category successfully saved');
@@ -32,14 +48,17 @@ const Category = ({categories, setCategories}) => {
     }
 
     return (
-        <div className={'d-flex m-2 shadowed'}>
-            <div className={'col-3 shadowed'}>
+        <div className='d-flex justify-content-around m-2'>
+            <div className={'col-5 shadowed'}>
+                <h3 className={'text-center'}>Categories</h3>
+                <hr/>
                 <Table striped bordered variant='dark'>
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Parent</th>
-                        <th className="text-center">Visible</th>
+                        <th className='col-4'>Name</th>
+                        <th className='col-3'>Parent</th>
+                        <th className='col-3'>Attachment</th>
+                        <th className="text-center col-2">Visible</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -47,6 +66,16 @@ const Category = ({categories, setCategories}) => {
                         <tr key={item.catId}>
                             <td>{item.name}</td>
                             <td>{item.parentName}</td>
+                            <td>
+                                {item.attachment && (
+                                    <Image
+                                        rounded
+                                        width={200}
+                                        src={base64Util(item.attachment)}
+                                        fluid
+                                    />
+                                )}
+                            </td>
                             <td className="text-center">
                                 <Form.Switch
                                     disabled
@@ -58,8 +87,8 @@ const Category = ({categories, setCategories}) => {
                     </tbody>
                 </Table>
             </div>
-            <Form className={'col-9'}>
-                <h3 className={'text-center'}>Categories</h3>
+            <Form className={'col-5 shadowed'}>
+                <h3 className={'text-center'}>Add category</h3>
                 <hr/>
                 <Form.Group
                     as={Row}
@@ -117,6 +146,37 @@ const Category = ({categories, setCategories}) => {
                         style={{display: 'flex', alignItems: 'center'}}
                     >
                         <Form.Switch ref={visible}/>
+                    </Col>
+                </Form.Group>
+
+                <Form.Group
+                    as={Row}
+                    className="mb-3">
+                    <Form.Label
+                        column sm={3}
+                        className={'text-end'}
+                    >
+                        Image
+                    </Form.Label>
+                    <Col>
+                        <input
+                            type='file'
+                            onChange={handleAvatar}
+                        />
+                    </Col>
+                </Form.Group>
+
+                <Form.Group
+                    as={Row}
+                    className="mb-3">
+                    <Form.Label column sm={3} className={'text-end'}/>
+                    <Col>
+                        <Image
+                            fluid
+                            rounded
+                            width={200}
+                            src={previewAvatar}
+                        />
                     </Col>
                 </Form.Group>
 

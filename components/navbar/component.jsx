@@ -1,28 +1,30 @@
 import React from 'react';
 import Link from 'next/link';
-import {Button, ButtonGroup} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {useRouter} from 'next/router';
 import {logout} from '../../api/authentication';
+import {NavbarItem} from "./NavbarItem";
 
 const LinkButtonGroup = ({links}) => {
 
     function getButton(link) {
         return (
-            <Button key={link.href || link.text} variant='outline-primary' onClick={link.onClick}>
-                {link.text}
-            </Button>
+            <NavbarItem>
+                <button key={link.href || link.text} onClick={link.onClick}>
+                    {link.text}
+                </button>
+            </NavbarItem>
         );
     }
 
     return (
-        <ButtonGroup>
+        <div className='d-flex'>
             {links.map((link) => link.href ? (
                 <Link key={link.href} href={link.href}>
                     {getButton(link)}
                 </Link>
             ) : (getButton(link)))}
-        </ButtonGroup>
+        </div>
     );
 };
 
