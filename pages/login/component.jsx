@@ -1,12 +1,10 @@
-import React, {useEffect, useRef} from 'react';
-import {useRouter} from 'next/router';
-import {
-  Button, Col, Container, Form, InputGroup, Row,
-} from 'react-bootstrap';
-import {LOGIN_URL} from '../../api/constant';
+import React, { useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { Button, Col, Container, Form, InputGroup, Row, } from 'react-bootstrap';
+import { LOGIN_URL } from '../../api/constant';
 import validateEmail from '../../utils/validation';
-import {authenticate} from "../../api/authentication";
-import {toast} from "react-toastify";
+import { authenticate } from '../../api/authentication';
+import { toast } from 'react-toastify';
 
 function Login() {
   const router = useRouter();
@@ -23,17 +21,21 @@ function Login() {
     };
     document.addEventListener('keydown', keyDownHandler);
 
-    return () => document.removeEventListener('keydown', keyDownHandler);;
+    return () => document.removeEventListener('keydown', keyDownHandler);
+    ;
   }, [email, password]);
 
   const login = () => {
     if (!validateEmail(email.current.value)) {
       toast.error('Invalid email address');
     } else {
-      authenticate(LOGIN_URL, {email: email.current.value, password: password.current.value})
-          .then((response) => response && router.push('/'));
+      authenticate(LOGIN_URL, {
+        email: email.current.value,
+        password: password.current.value
+      })
+        .then((response) => response && router.push('/'));
     }
-  }
+  };
 
   return (
     <div className="login-form">
@@ -48,9 +50,9 @@ function Login() {
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Text>Email</InputGroup.Text>
               <Form.Control
-                  id="email"
-                  ref={email}
-                  type="email"
+                id="email"
+                ref={email}
+                type="email"
               />
             </InputGroup>
           </Col>
@@ -60,9 +62,9 @@ function Login() {
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Text>Password</InputGroup.Text>
               <Form.Control
-                  id="password"
-                  ref={password}
-                  type="password"
+                id="password"
+                ref={password}
+                type="password"
               />
             </InputGroup>
           </Col>

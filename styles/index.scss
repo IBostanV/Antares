@@ -16,17 +16,17 @@ html, body, #__next {
 }
 
 body {
-  background: url('/resources/bg.jpg') no-repeat fixed center;
-  background-size: cover;
-  backdrop-filter: blur(3px);
-  overflow-x: hidden;
+  //background: url('/resources/bg.jpg') no-repeat fixed center;
+  //background-size: cover;
+  //backdrop-filter: blur(3px);
+  //overflow-x: hidden;
+  background-color: #000;
 }
 
 main {
   background-color: #000000ad;
   box-shadow: 0 0 15px black;
   height: auto;
-  min-height: 100%;
   padding: 20px;
 }
 
@@ -61,6 +61,7 @@ ul {
   overflow: hidden;
   margin: 0 auto;
   text-align: center;
+
   ul {
     list-style-type: none;
   }
@@ -74,6 +75,7 @@ ul {
   border-color: transparent;
   background-color: #e8f0fe;
   padding: 7px;
+
   &:focus-visible {
     outline: none !important;
   }
@@ -81,6 +83,7 @@ ul {
 
 .highlight {
   transition: transform 0.300ms ease;
+
   &:hover {
     text-decoration: underline !important;
     transform: scale(1.8);
@@ -94,18 +97,8 @@ ul {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .p-virtualscroller {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.thisover:hover {
-  cursor: pointer;
-  font-size: 40px;
-}
-
-.bordered {
-  border-radius: 10px;
-  background-color: #000;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .shadowed {
@@ -123,4 +116,12 @@ ul {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.filter-blur {
+  filter: blur(2px);
+}
+
+.text-shadow {
+  text-shadow: black 0 0 7px;
 }

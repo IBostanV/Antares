@@ -2,34 +2,37 @@ import React from 'react';
 import '../styles/index.scss';
 import PropTypes from 'prop-types';
 import Layout from '../components/layout';
-import {Slide, ToastContainer} from "react-toastify";
+import { Slide, ToastContainer } from 'react-toastify';
 import 'primereact/resources/themes/lara-dark-blue/theme.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'swiper/swiper-bundle.css';
 
-function Application({Component, pageProps}) {
-    const {isLoggedIn} = pageProps;
+function Application({
+  Component,
+  pageProps
+}) {
+  const { isLoggedIn } = pageProps;
 
-    return (
-        <Layout isLoggedIn={isLoggedIn}>
-            <Component {...pageProps} />
-            <ToastContainer theme="dark"
-                            autoClose="2000"
-                            draggable={true}
-                            transition={Slide}
-                            closeOnClick={true}
-                            pauseOnHover={true}
-                            position='bottom-right'
-                            hideProgressBar={false}/>
-        </Layout>
-    );
+  return (
+    <Layout isLoggedIn={isLoggedIn}>
+      <Component {...pageProps} />
+      <ToastContainer theme="dark"
+                      autoClose="2000"
+                      draggable={true}
+                      transition={Slide}
+                      closeOnClick={true}
+                      pauseOnHover={true}
+                      position="bottom-right"
+                      hideProgressBar={false}/>
+    </Layout>
+  );
 }
 
 Application.propTypes = {
-    Component: PropTypes.func,
-    pageProps: PropTypes.shape({
-        isLoggedIn: PropTypes.bool,
-    }),
+  Component: PropTypes.func,
+  pageProps: PropTypes.shape({
+    isLoggedIn: PropTypes.bool,
+  }),
 };
 
 export default Application;

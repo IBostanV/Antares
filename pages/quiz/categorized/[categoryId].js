@@ -6,7 +6,7 @@ import { hasCookie } from 'cookies-next';
 import { getCategorizedQuiz } from '../../../api/quiz';
 import getQuestionWithOptions from '../../../api/question/get-with-options';
 import saveUserQuiz from '../../../api/quiz/save';
-import base64Util from "../../../utils/base64Util";
+import base64Util from '../../../utils/base64Util';
 
 function Quiz() {
   const router = useRouter();
@@ -18,24 +18,29 @@ function Quiz() {
   const [completed, setCompleted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState({});
   const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
-  const [quiz, setQuiz] = useState({ quizTime: null, questionIds: [] });
+  const [quiz, setQuiz] = useState({
+    quizTime: null,
+    questionIds: []
+  });
 
   useEffect(() => {
     const createQuiz = async () => await getCategorizedQuiz(categoryId);
 
-    createQuiz().then((quiz) => {
-      if (quiz) {
-        setQuiz(quiz);
-        setCurrentQuestionTime(Date.now());
-        setQuestionIds(Array.from(quiz.questionIds));
+    createQuiz()
+      .then((quiz) => {
+        if (quiz) {
+          setQuiz(quiz);
+          setCurrentQuestionTime(Date.now());
+          setQuestionIds(Array.from(quiz.questionIds));
 
-        const startTime = moment();
-        setInterval(() => {
-          const time = moment(moment()).diff(startTime, 'seconds');
-          setSpentTime(time);
-        }, 100);
-      }
-    });
+          const startTime = moment();
+          setInterval(() => {
+            const time = moment(moment())
+              .diff(startTime, 'seconds');
+            setSpentTime(time);
+          }, 100);
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -51,11 +56,16 @@ function Quiz() {
   }, [completed]);
 
   const saveQuizResult = () => {
-    const saveResult = async () => await saveUserQuiz({ quiz, spentTime, answersJson: JSON.stringify(userAnswers) });
-    saveResult().then((result) => {
-      router.push(`/quiz/result?historyId=${result.data.historyId}`)
-        .then((pushEvent) => console.log(pushEvent));
+    const saveResult = async () => await saveUserQuiz({
+      quiz,
+      spentTime,
+      answersJson: JSON.stringify(userAnswers)
     });
+    saveResult()
+      .then((result) => {
+        router.push(`/quiz/result?historyId=${result.data.historyId}`)
+          .then((pushEvent) => console.log(pushEvent));
+      });
   };
 
   const handleAnswer = (termId) => {
@@ -77,7 +87,8 @@ function Quiz() {
 
   const handleCurrentQuestion = (questionId) => {
     const fetchQuestionWithOptions = async () => await getQuestionWithOptions(questionId);
-    fetchQuestionWithOptions().then((question) => setCurrentQuestion(question));
+    fetchQuestionWithOptions()
+      .then((question) => setCurrentQuestion(question));
   };
 
   return (
@@ -113,12 +124,18 @@ function Quiz() {
   );
 }
 
-export const getServerSideProps = async ({req, res}) => ({
+export const getServerSideProps = async ({
+  req,
+  res
+}) => ({
   props:
-      {
-        hostUrl: process.env.NEXT_PUBLIC_BE_HOST_URL,
-        isLoggedIn: hasCookie('authorization', {req, res}),
-      },
+    {
+      hostUrl: process.env.NEXT_PUBLIC_BE_HOST_URL,
+      isLoggedIn: hasCookie('authorization', {
+        req,
+        res
+      }),
+    },
 });
 
 export default Quiz;

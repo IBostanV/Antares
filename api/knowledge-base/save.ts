@@ -1,7 +1,8 @@
+import { KNOWLEDGE_BASE_PATH } from '../constant';
 import request, { PATCH } from '../../utils/request';
-import { GLOSSARY_PATH } from '../constant';
+import { KnowledgeBaseRecord } from '../../components/domain/knowledge-base-record';
 
-export default (body, attachment) => {
+export default (body: KnowledgeBaseRecord, attachment: any) => {
   const formData = new FormData();
 
   formData.append('request', new Blob([JSON.stringify(body)], { type: 'application/json' }));
@@ -10,7 +11,7 @@ export default (body, attachment) => {
     formData.append('attachment', attachment, attachment.name);
   }
 
-  return request(`${GLOSSARY_PATH}/save`, {
+  return request(KNOWLEDGE_BASE_PATH, {
     body: formData,
     method: PATCH,
     withHeaders: true,
