@@ -1,5 +1,5 @@
-import request, {POST} from '../../utils/request';
-import {CATEGORY_PATH} from '../constant';
+import request, { POST } from '../../utils/request';
+import { CATEGORY_PATH } from '../constant';
 
 const saveCategory = (body, attachment) => {
   const formData = new FormData();
@@ -18,6 +18,6 @@ const saveCategory = (body, attachment) => {
       'Content-Type': 'multipart/form-data',
     }
   });
-}
+};
 
 export default saveCategory;

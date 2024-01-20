@@ -16,6 +16,7 @@ UI for the Play-Quiz Application
 
 
 #For Next.js redirects use the following snippet in next.config.js:
+
 ```
 async redirects() {
 return [

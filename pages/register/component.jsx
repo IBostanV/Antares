@@ -1,8 +1,8 @@
-import React, {useRef} from 'react';
-import {Button, Col, Container, Form, InputGroup, Row,} from 'react-bootstrap';
-import {useRouter} from 'next/router';
-import {authenticate} from '../../api/authentication';
-import {REGISTER_URL} from "../../api/constant";
+import React, { useRef } from 'react';
+import { Button, Col, Container, Form, InputGroup, Row, } from 'react-bootstrap';
+import { useRouter } from 'next/router';
+import { authenticate } from '../../api/authentication';
+import { REGISTER_URL } from '../../api/constant';
 
 function Register() {
   const router = useRouter();
@@ -13,10 +13,13 @@ function Register() {
 
   const onSubmit = () => {
     if (password.current.value === repass.current.value) {
-      authenticate(REGISTER_URL, {email: email.current.value, password: password.current.value})
-          .then((response) => {
-            if (response) router.push('/');
-          });
+      authenticate(REGISTER_URL, {
+        email: email.current.value,
+        password: password.current.value
+      })
+        .then((response) => {
+          if (response) router.push('/');
+        });
     }
   };
 
@@ -33,9 +36,9 @@ function Register() {
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Text>Email</InputGroup.Text>
               <Form.Control
-                  id="email"
-                  ref={email}
-                  type="email"
+                id="email"
+                ref={email}
+                type="email"
               />
             </InputGroup>
           </Col>
@@ -45,9 +48,9 @@ function Register() {
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Text>Password</InputGroup.Text>
               <Form.Control
-                  id="password"
-                  ref={password}
-                  type="password"
+                id="password"
+                ref={password}
+                type="password"
               />
             </InputGroup>
           </Col>
@@ -57,9 +60,9 @@ function Register() {
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Text>Password</InputGroup.Text>
               <Form.Control
-                  id="repass"
-                  ref={repass}
-                  type="password"
+                id="repass"
+                ref={repass}
+                type="password"
               />
             </InputGroup>
           </Col>

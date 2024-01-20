@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Qs from 'qs';
-import {getCookie, hasCookie} from 'cookies-next';
-import {toast} from 'react-toastify';
-import {CSRF_TOKEN_URL} from '../api/constant';
+import { getCookie, hasCookie } from 'cookies-next';
+import { toast } from 'react-toastify';
+import { CSRF_TOKEN_URL } from '../api/constant';
 
 export const POST = 'post';
 export const GET = 'get';
@@ -22,11 +22,15 @@ const axiosRequest = (url, params = {}) => {
   const options = {
     url,
     method: GET,
-    headers: {
-      ...(hasCookie('authorization') ? {Authorization: `Bearer ${getCookie('authorization')}`} : undefined),
-    },
     withHeaders: false,
-    ...params,
+    ...{
+      ...params,
+      headers: {
+        ...params.headers,
+        ...(hasCookie('authorization') ? { Authorization: `Bearer ${getCookie('authorization')}` } : undefined),
+        'X-XSRF-TOKEN': params.xsrfToken
+      }
+    },
   };
 
   let request;
@@ -42,31 +46,34 @@ const axiosRequest = (url, params = {}) => {
       break;
   }
 
-  return request.then((response) => ((params.withHeaders) ? response : response.data || response))
-      .catch(({response}) => {
-        const message = (error) => (
-            <div>
-              Status code:
-              {response.status}
-              <hr/>
-              {error}
-            </div>
-        );
+  return request.then((response) => (params.withHeaders) ? response : response.data || response)
+    .catch(({ response }) => {
+      const message = (error) => (
+        <div>
+          Status code:
+          {response.status}
+          <hr/>
+          {error}
+        </div>
+      );
 
-        if (response) {
-          if (Array.isArray(response.data)) {
-            response.data.forEach(((error) => toast.error(message(error))));
-          } else {
-            toast.error(message(response.data));
-          }
+      if (response) {
+        if (Array.isArray(response.data)) {
+          response.data.forEach(((error) => toast.error(message(error))));
+        } else {
+          toast.error(message(response.data));
         }
-      });
+      }
+    });
 };
 
 export default (url, requestOptions = {}) => {
   if ([POST, PATCH, PUT].includes(requestOptions.method)) {
     return axiosRequest(CSRF_TOKEN_URL)
-        .then(() => axiosRequest(url, requestOptions));
+      .then((result) => axiosRequest(url, {
+        ...requestOptions,
+        xsrfToken: result.token
+      }));
   }
   return axiosRequest(url, requestOptions);
 };
