@@ -23,7 +23,7 @@ export const NavbarItem = styled.div`
         border: none;
         color: #FFFFFF !important;
         font-family: 'Montserrat-Medium', sans-serif;
-        font-size: 1.1em;
+        font-size: 1em;
         text-decoration: none;
 
         &:hover {

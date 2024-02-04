@@ -142,8 +142,8 @@ function Profile() {
 
   return (
     <div className="d-flex">
-      <Container className="mt-3">
-        <h2>User</h2>
+      <Container>
+        <h3>User</h3>
         <Row className="mt-4">
           <Col>
                         <span className="p-float-label">
@@ -266,8 +266,8 @@ function Profile() {
           </Col>
         </Row>
       </Container>
-      <Container className="mt-3">
-        <h2>Privacy</h2>
+      <Container>
+        <h3>Privacy</h3>
         <Row className="mt-4">
           <Col>
                         <span className="p-float-label">

@@ -37,7 +37,7 @@ const KnowledgeBaseAdmin = ({ categories }) => {
 
   return (
     <Form className={'col-5 shadowed'}>
-      <h3 className={'text-center'}>Create new record</h3>
+      <h4 className={'text-center'}>Create new record</h4>
       <hr/>
 
       <Form.Group

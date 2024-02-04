@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import saveGlossary from '../../../api/glossary/save';
 import Form from 'react-bootstrap/Form';
 import { Button, Col, Image, Row, Table } from 'react-bootstrap';
@@ -19,6 +19,12 @@ export default function Glossary({
   const [addAttachment, setAddAttachment] = useState();
   const [addCategory, setAddCategory] = useState({ catId: 2 });
   const [addIsActive, setAddIsActive] = useState(false);
+
+  useEffect(() => {
+    if (categories.length) {
+      setAddCategory(categories[0]);
+    }
+  }, [categories]);
 
   const [blob, setBlob] = useState(null);
   const [item, setItem] = useState({
@@ -112,7 +118,7 @@ export default function Glossary({
   return (<div>
     <div className={'d-flex shadowed'}>
       <div className={'col-5 shadowed'}>
-        <h3 className={'text-center'}>Glossaries by</h3>
+        <h4 className={'text-center'}>Glossaries by</h4>
         <Form.Select onChange={(event) => setGlossaryFilter(event.target.value)}>
           {categories?.map(category => (
             <option value={category.catId} key={category.catId}>{category.name}</option>))}
@@ -147,7 +153,7 @@ export default function Glossary({
       </div>
       <div className={'col-7 shadowed'}>
         <Form className={'shadowed mb-2 pb-4'}>
-          <h3 className={'text-center'}>Add glossary</h3>
+          <h4 className={'text-center'}>Add glossary</h4>
           <hr/>
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm={3} className={'text-end'}>Key</Form.Label>
@@ -254,7 +260,7 @@ export default function Glossary({
             </Col>
           </Form.Group>
         </Form>
-        <h3 className={'text-center'}>Edit Glossary</h3>
+        <h4 className={'text-center'}>Edit Glossary</h4>
         <hr/>
 
         <Form.Group as={Row} className="mb-3">
