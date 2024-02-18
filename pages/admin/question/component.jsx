@@ -139,7 +139,7 @@ export default function Glossary({
   return (
     <div>
       <Form className={'shadowed'}>
-        <h3 className={'text-center'}>Add Question</h3>
+        <h4 className={'text-center'}>Add Question</h4>
         <hr/>
 
         <Form.Group as={Row} className="mb-3">
@@ -348,7 +348,7 @@ export default function Glossary({
         </Form.Group>
       </Form>
       <div className={'shadowed'}>
-        <h3 className={'text-center'}>Questions</h3>
+        <h4 className={'text-center'}>Questions</h4>
         <hr/>
         <Table striped bordered variant="dark">
           <thead>

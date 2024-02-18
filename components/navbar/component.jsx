@@ -83,7 +83,7 @@ function Navbar({ isLoggedIn }) {
   ];
 
   return (
-    <div className="index">
+    <div className="header">
       <LinkButtonGroup links={commonLinks}/>
       {isLoggedIn
         ? (<LinkButtonGroup links={authenticatedLinks}/>)

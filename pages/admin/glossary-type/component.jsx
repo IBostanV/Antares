@@ -58,7 +58,7 @@ function GlossaryType({
         </Table>
       </div>
       <Form className={'col-9 shadowed'}>
-        <h3 className={'text-center'}>Glossary Types</h3>
+        <h4 className={'text-center'}>Glossary Types</h4>
         <hr/>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={3} className={'text-end'}>Name</Form.Label>

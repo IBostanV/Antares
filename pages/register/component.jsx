@@ -3,6 +3,7 @@ import { Button, Col, Container, Form, InputGroup, Row, } from 'react-bootstrap'
 import { useRouter } from 'next/router';
 import { authenticate } from '../../api/authentication';
 import { REGISTER_URL } from '../../api/constant';
+import { toast } from 'react-toastify';
 
 function Register() {
   const router = useRouter();
@@ -18,7 +19,10 @@ function Register() {
         password: password.current.value
       })
         .then((response) => {
-          if (response) router.push('/');
+          if (response) {
+            toast.success('Your account has been successfully created.');
+            router.push('/');
+          }
         });
     }
   };

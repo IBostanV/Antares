@@ -44,7 +44,7 @@ const Category = ({
   return (
     <div className="d-flex justify-content-around m-2">
       <div className={'col-5 shadowed'}>
-        <h3 className={'text-center'}>Categories</h3>
+        <h4 className={'text-center'}>Categories</h4>
         <hr/>
         <Table striped bordered variant="dark">
           <thead>
@@ -82,7 +82,7 @@ const Category = ({
         </Table>
       </div>
       <Form className={'col-5 shadowed'}>
-        <h3 className={'text-center'}>Add category</h3>
+        <h4 className={'text-center'}>Add category</h4>
         <hr/>
         <Form.Group
           as={Row}
