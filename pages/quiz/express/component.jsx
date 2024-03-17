@@ -103,6 +103,7 @@ function ExpressQuiz() {
       <Knob
         readOnly
         size={100}
+        strokeWidth={4}
         textColor="white"
         valueColor="white"
         rangeColor="#0d6efd"

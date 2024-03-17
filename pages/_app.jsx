@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/index.scss';
 import PropTypes from 'prop-types';
 import Layout from '../components/layout';
-import { Slide, ToastContainer } from 'react-toastify';
+import {Slide, ToastContainer} from 'react-toastify';
 import 'primereact/resources/themes/lara-dark-blue/theme.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'swiper/swiper-bundle.css';

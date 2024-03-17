@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import { Button, Col, Image, Row, Table } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import base64Util from '../../../utils/base64Util';
+import {GlossaryEntity} from "../../../domain/glossary-entity";
 
 export default function Glossary({
   categories,
@@ -21,24 +22,13 @@ export default function Glossary({
   const [addIsActive, setAddIsActive] = useState(false);
 
   useEffect(() => {
-    if (categories.length) {
+    if (categories?.length) {
       setAddCategory(categories[0]);
     }
   }, [categories]);
 
   const [blob, setBlob] = useState(null);
-  const [item, setItem] = useState({
-    termId: null,
-    key: '',
-    value: '',
-    isActive: false,
-    type: {
-      name: ''
-    },
-    category: {
-      catId: ''
-    }
-  });
+  const [item, setItem] = useState(GlossaryEntity.getDefaultInstance());
 
   const handleKey = (event) => setAddKey(event.target.value);
   const handleValue = (event) => setAddValue(event.target.value);
@@ -304,7 +294,7 @@ export default function Glossary({
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={3} className={'text-end'}>Category</Form.Label>
           <Col sm={8}>
-            <Form.Select value={item.categoryId}
+            <Form.Select value={item.category?.catId}
                          onChange={(event) => setItem((values) => ({
                            ...values,
                            category: { catId: event.target.value }

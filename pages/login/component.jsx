@@ -6,11 +6,17 @@ import validateEmail from '../../utils/validation';
 import { authenticate } from '../../api/authentication';
 import { toast } from 'react-toastify';
 
-function Login() {
+function Login({isLoggedIn}) {
   const router = useRouter();
 
   const email = useRef();
   const password = useRef();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const keyDownHandler = (event) => {
@@ -22,7 +28,6 @@ function Login() {
     document.addEventListener('keydown', keyDownHandler);
 
     return () => document.removeEventListener('keydown', keyDownHandler);
-    ;
   }, [email, password]);
 
   const login = () => {
