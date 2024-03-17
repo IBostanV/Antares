@@ -72,7 +72,7 @@ export default (url, requestOptions = {}) => {
     return axiosRequest(CSRF_TOKEN_URL)
       .then((result) => axiosRequest(url, {
         ...requestOptions,
-        xsrfToken: result.token
+        xsrfToken: result?.token
       }));
   }
   return axiosRequest(url, requestOptions);

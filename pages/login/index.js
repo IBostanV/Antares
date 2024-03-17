@@ -1,8 +1,10 @@
-export { default } from './component';
+import {hasCookie} from "cookies-next";
 
-export const getStaticProps = async () => ({
-  props:
-    {
-      hostUrl: process.env.BE_HOST_URL,
+export {default} from './component';
+
+export const getServerSideProps = async ({req, res}) => ({
+    props: {
+        hostUrl: process.env.BE_HOST_URL,
+        isLoggedIn: hasCookie('authorization', {req, res}),
     },
 });

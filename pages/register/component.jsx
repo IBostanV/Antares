@@ -1,16 +1,22 @@
-import React, { useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import { Button, Col, Container, Form, InputGroup, Row, } from 'react-bootstrap';
 import { useRouter } from 'next/router';
 import { authenticate } from '../../api/authentication';
 import { REGISTER_URL } from '../../api/constant';
 import { toast } from 'react-toastify';
 
-function Register() {
+function Register({isLoggedIn}) {
   const router = useRouter();
 
   const email = useRef();
   const repass = useRef();
   const password = useRef();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [isLoggedIn]);
 
   const onSubmit = () => {
     if (password.current.value === repass.current.value) {
