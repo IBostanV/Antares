@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Col, Container, Image, Row} from 'react-bootstrap';
 import {Calendar} from 'primereact/calendar';
 import {MultiSelect} from 'primereact/multiselect';
-import {getAllCategories} from '../../api/category';
+import {getAllCategoriesShort} from '../../api/category';
 import {Dropdown} from 'primereact/dropdown';
 import getLanguages from '../../api/question/get-languages';
 import {InputText} from 'primereact/inputtext';
@@ -65,10 +65,13 @@ function Profile() {
         ...values,
         username: event.target.value
     }));
-    const handleFavCategories = (event) => setUser(values => ({
-        ...values,
-        favoriteCategories: event.value
-    }));
+    const handleFavCategories = (event) => {
+        console.log(event.value)
+        setUser(values => ({
+            ...values,
+            favoriteCategories: event.value
+        }));
+    }
 
     const handlePassword = (event) => setPassword(event.target.value);
     const handleOldPassword = (event) => setOldPassword(event.target.value);
@@ -91,7 +94,7 @@ function Profile() {
     }, []);
 
     useEffect(() => {
-        const fetchCategories = async () => await getAllCategories();
+        const fetchCategories = async () => await getAllCategoriesShort();
         fetchCategories()
             .then(result => setCategories(result));
 
