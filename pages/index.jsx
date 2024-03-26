@@ -14,9 +14,11 @@ import { getAllCategories } from '../api/category';
 import { useRouter } from 'next/router';
 import { Card } from 'react-bootstrap';
 import base64Util from '../utils/base64Util';
+import {useTranslation} from "react-i18next";
 
 function Home() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -34,7 +36,7 @@ function Home() {
 
   return (
       <div>
-        <h4>Popular categories</h4>
+        <h4>{t('popular_categories')}</h4>
         <Swiper
             loop
             freeMode={true}

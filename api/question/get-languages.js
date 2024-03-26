@@ -1,6 +1,6 @@
-import { QUESTION_PATH } from '../constant';
+import { LANGUAGE_PATH } from '../constant';
 import request from '../../utils/request';
 
-const getQuestionLanguages = () => request(`${QUESTION_PATH}/question-languages`);
+const getLanguages = () => request(`${LANGUAGE_PATH}/languages`);
 
-export default getQuestionLanguages;
+export default getLanguages;

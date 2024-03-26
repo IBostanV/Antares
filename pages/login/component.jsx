@@ -14,7 +14,7 @@ function Login({isLoggedIn}) {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/");
+      router.push('/');
     }
   }, [isLoggedIn]);
 
@@ -38,7 +38,12 @@ function Login({isLoggedIn}) {
         email: email.current.value,
         password: password.current.value
       })
-        .then((response) => response && router.push('/'));
+          .then((account) => {
+            if (account) {
+              router.push('/')
+                  .then(() => localStorage.setItem('lang', account.data.language));
+            }
+          });
     }
   };
 

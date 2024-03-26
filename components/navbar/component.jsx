@@ -1,16 +1,24 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { logout } from '../../api/authentication';
 import { NavbarItem } from './NavbarItem';
+import {useTranslation} from "react-i18next";
+import {Col} from "react-bootstrap";
+import {Dropdown} from "primereact/dropdown";
+import getLanguages from "../../api/question/get-languages";
+import saveUserLanguage from "../../api/profile/save-language";
+import {toast} from "react-toastify";
 
 const LinkButtonGroup = ({ links }) => {
+  const {t} = useTranslation();
+
   function getButton(link) {
     return (
-      <NavbarItem>
-        <button key={link.href || link.text} onClick={link.onClick}>
-          {link.text}
+      <NavbarItem key={link.href || link.text}>
+        <button onClick={link.onClick}>
+          {t(link.text)}
         </button>
       </NavbarItem>
     );
@@ -29,44 +37,74 @@ const LinkButtonGroup = ({ links }) => {
 
 function Navbar({ isLoggedIn }) {
   const router = useRouter();
+  const {i18n} = useTranslation();
+
+  const [languages, setLanguages] = useState([]);
+  const [language, setLanguage] = useState(1);
 
   const signOut = () => logout()
-    .then(() => router.push('/'));
+      .then(() => router.push('/'));
+
+  useEffect(() => {
+    const fetchLanguages = async () => await getLanguages();
+    fetchLanguages()
+        .then(result => setLanguages(result));
+
+    setLanguage(localStorage.getItem('lang')?.langId);
+  }, []);
+
+  const handleLanguage = (event) => {
+    const value = event.target.value;
+    const newLang = languages.find(item => item.langId.toString() === value);
+
+    const saveNewLanguage = async () => await saveUserLanguage(newLang);
+
+    saveNewLanguage()
+        .then((saved) => {
+          if (saved) {
+            localStorage.setItem('lang', newLang);
+            setLanguage(newLang.langId);
+
+            i18n.changeLanguage(newLang.langCode)
+                .then((tFnc) => toast.success(tFnc('saved')));
+          }
+        });
+  }
 
   const commonLinks = [
     {
       href: '/',
-      text: 'Home'
+      text: 'home'
     },
     {
       href: '/quiz/categorized',
-      text: 'Take quiz'
+      text: 'take_quiz'
     },
     {
       href: '/quiz/express',
-      text: 'Express quiz'
+      text: 'express_quiz'
     },
     {
       href: '/chat',
-      text: 'Chat'
+      text: 'chat'
     },
     {
       href: '/knowledge-base',
-      text: 'Knowledge base'
+      text: 'knowledge_base'
     },
     {
       href: '/admin',
-      text: 'Admin'
+      text: 'admin_dashboard'
     }
   ];
 
   const authenticatedLinks = [
     {
       href: '/profile',
-      text: 'Profile'
+      text: 'profile'
     },
     {
-      text: 'Sign out',
+      text: 'sign_out',
       onClick: signOut
     }
   ];
@@ -74,21 +112,28 @@ function Navbar({ isLoggedIn }) {
   const unauthenticatedLinks = [
     {
       href: '/login',
-      text: 'Login'
+      text: 'login'
     },
     {
       href: '/register',
-      text: 'Register'
+      text: 'register'
     }
   ];
 
+  const changeLang = () =>
+      <select className={'lang-select mx-3'} onChange={handleLanguage} value={language}>
+        {languages?.map(lang =>
+            <option key={lang.langId} value={lang.langId}>{lang.langCode}</option>
+        )}
+      </select>
+
   return (
-    <div className="header">
-      <LinkButtonGroup links={commonLinks}/>
-      {isLoggedIn
-        ? (<LinkButtonGroup links={authenticatedLinks}/>)
-        : (<LinkButtonGroup links={unauthenticatedLinks}/>)}
-    </div>
+      <div className="header">
+        <LinkButtonGroup links={commonLinks}/>
+        {isLoggedIn
+            ? (<div className={'d-flex'}>{changeLang()}<LinkButtonGroup links={authenticatedLinks}/></div>)
+            : (<div className={'d-flex'}>{changeLang()}<LinkButtonGroup links={unauthenticatedLinks}/></div>)}
+      </div>
   );
 }
 

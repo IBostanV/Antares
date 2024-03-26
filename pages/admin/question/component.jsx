@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import { Button, Col, Row, Table } from 'react-bootstrap';
 import getQuestionTypes from '../../../api/question/get-types';
 import getQuestionAttributes from '../../../api/question/get-attributes';
-import getQuestionLanguages from '../../../api/question/get-languages';
+import getLanguages from '../../../api/question/get-languages';
 import saveQuestion from '../../../api/question/save';
 import getQuestions from '../../../api/question/get-all';
 import { toast } from 'react-toastify';
@@ -39,7 +39,7 @@ export default function Glossary({
   }, []);
 
   useEffect(() => {
-    const fetchQuestionLanguages = async () => await getQuestionLanguages();
+    const fetchQuestionLanguages = async () => await getLanguages();
     fetchQuestionLanguages()
       .then(values => setLanguages(values));
   }, []);
