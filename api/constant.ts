@@ -13,6 +13,7 @@ export const CATEGORY_PATH = API + '/category';
 export const GLOSSARY_PATH = API + '/glossary';
 
 export const QUESTION_PATH = API + '/question';
+export const LANGUAGE_PATH = API + '/language';
 
 export const USER_HISTORY_PATH = API + '/user-history';
 

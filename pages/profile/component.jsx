@@ -3,8 +3,6 @@ import {Button, Col, Container, Image, Row} from 'react-bootstrap';
 import {Calendar} from 'primereact/calendar';
 import {MultiSelect} from 'primereact/multiselect';
 import {getAllCategoriesShort} from '../../api/category';
-import {Dropdown} from 'primereact/dropdown';
-import getLanguages from '../../api/question/get-languages';
 import {InputText} from 'primereact/inputtext';
 import {getOccupations, saveProfileInfo} from '../../api/profile';
 import {toast} from 'react-toastify';
@@ -15,9 +13,11 @@ import {getCurrentUser} from '../../api/user';
 import base64Util from '../../utils/base64Util';
 import moment from 'moment';
 import {setWIthPreview} from '../../utils/fileUtils';
+import {useTranslation} from "react-i18next";
 
 function Profile() {
     const router = useRouter();
+    const { t, i18n} = useTranslation();
 
     const [user, setUser] = useState({});
 
@@ -29,7 +29,6 @@ function Profile() {
     const [oldPassword, setOldPassword] = useState('');
     const [passwordMatches, setPasswordMatches] = useState(null);
 
-    const [languages, setLanguages] = useState([]);
     const [userOccupations, setUserOccupations] = useState([]);
     const [categories, setCategories] = useState([]);
 
@@ -40,10 +39,6 @@ function Profile() {
     const handleBirthday = (event) => setUser(values => ({
         ...values,
         birthday: event.target.value
-    }));
-    const handleLanguage = (event) => setUser(values => ({
-        ...values,
-        language: event.value
     }));
     const handleEmail = (event) => setUser(values => ({
         ...values,
@@ -66,7 +61,6 @@ function Profile() {
         username: event.target.value
     }));
     const handleFavCategories = (event) => {
-        console.log(event.value)
         setUser(values => ({
             ...values,
             favoriteCategories: event.value
@@ -85,6 +79,7 @@ function Profile() {
                     birthday = [2000, 1, 1],
                     avatar
                 } = response ?? {};
+
                 setUser({
                     ...response,
                     birthday: new Date(birthday[0], birthday[1] - 1, birthday[2])
@@ -98,18 +93,14 @@ function Profile() {
         fetchCategories()
             .then(result => setCategories(result));
 
-        const fetchLanguages = async () => await getLanguages();
-        fetchLanguages()
-            .then(result => setLanguages(result));
-
         const fetchOccupations = async () => await getOccupations();
         fetchOccupations()
             .then(result => setUserOccupations(result));
     }, []);
 
     const saveProfile = async () => {
-        const birthday = moment(user.birthday)
-            .format('YYYY-MM-DD');
+        const birthday = moment(user.birthday).format('YYYY-MM-DD');
+
         const response = await saveProfileInfo(({
             ...user,
             isEnabled: user.enabled,
@@ -117,7 +108,7 @@ function Profile() {
         }), avatar);
 
         if (response) {
-            toast.success('Your info has been successfully saved');
+            toast.success(t('saved'));
         }
     };
 
@@ -155,7 +146,7 @@ function Profile() {
     return (
         <div className="d-flex">
             <Container>
-                <h3>User</h3>
+                <h3>{t('user')}</h3>
                 <Row className="mt-4">
                     <Col>
                         <span className="p-float-label">
@@ -163,7 +154,7 @@ function Profile() {
                                 value={user.username}
                                 onChange={handleUsername}
                                 className="w-100"/>
-                            <label htmlFor="input_value">Username</label>
+                            <label htmlFor="input_value">{t('username')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -177,7 +168,7 @@ function Profile() {
                                 onChange={handleEmail}
                                 className="w-100"
                             />
-                            <label htmlFor="input_value">Email</label>
+                            <label htmlFor="input_value">{t('email')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -189,7 +180,7 @@ function Profile() {
                                 value={user.name}
                                 onChange={handleName}
                                 className="w-100"/>
-                            <label htmlFor="input_value">Name</label>
+                            <label htmlFor="input_value">{t('name')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -201,7 +192,7 @@ function Profile() {
                                 value={user.surname}
                                 onChange={handleSurname}
                                 className="w-100"/>
-                            <label htmlFor="input_value">Surname</label>
+                            <label htmlFor="input_value">{t('surname')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -229,13 +220,13 @@ function Profile() {
                                 optionLabel="name"
                                 virtualScrollerOptions={{itemSize: 40}}
                                 className="w-100"/>
-                            <label htmlFor="input_value">Occupation</label>
+                            <label htmlFor="input_value">{t('occupation')}</label>
                         </span>
                     </Col>
                 </Row>
 
                 <Row className="mt-4">
-                    <Col sm={4}>
+                    <Col sm={6}>
                         <span className="p-float-label">
                                 <Calendar
                                     showButtonBar
@@ -244,21 +235,11 @@ function Profile() {
                                     dateFormat="yy-mm-dd"
                                     onChange={handleBirthday}
                                 />
-                            <label htmlFor="input_value">Birthday</label>
+                            <label htmlFor="input_value">{t('birthday')}</label>
                         </span>
                     </Col>
-                    <Col sm={4}>
-                        <span className="p-float-label">
-                                <Dropdown
-                                    value={user.language}
-                                    onChange={handleLanguage}
-                                    options={languages}
-                                    optionLabel="name"
-                                    className="w-100"/>
-                            <label htmlFor="input_value">Language</label>
-                        </span>
-                    </Col>
-                    <Col sm={4}>
+
+                    <Col sm={6}>
                         <span className="p-float-label">
                             <MultiSelect
                                 filter
@@ -268,7 +249,7 @@ function Profile() {
                                 optionLabel="name"
                                 virtualScrollerOptions={{itemSize: 40}}
                                 className="w-100"/>
-                            <label htmlFor="input_value">Favorite categories</label>
+                            <label htmlFor="input_value">{t('favorite_categories')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -290,12 +271,12 @@ function Profile() {
 
                 <Row>
                     <Col>
-                        <Button onClick={saveProfile}>Save</Button>
+                        <Button onClick={saveProfile}>{t('save')}</Button>
                     </Col>
                 </Row>
             </Container>
             <Container>
-                <h3>Privacy</h3>
+                <h3>{t('privacy')}</h3>
                 <Row className="mt-4">
                     <Col>
                         <span className="p-float-label">
@@ -306,7 +287,7 @@ function Profile() {
                                 onBlur={checkOldPassword}
                                 className={passwordMatches === null || passwordMatches ? 'w-100' : 'w-100 p-invalid'}
                             />
-                            <label htmlFor="input_value">Old password</label>
+                            <label htmlFor="input_value">{t('old_password')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -319,7 +300,7 @@ function Profile() {
                                 value={password}
                                 onChange={handlePassword}
                                 className="w-100"/>
-                            <label htmlFor="input_value">New password</label>
+                            <label htmlFor="input_value">{t('new_password')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -332,14 +313,14 @@ function Profile() {
                                 value={repeatPassword}
                                 onChange={handleRepeatPassword}
                                 className="w-100"/>
-                            <label htmlFor="input_value">Retype new password</label>
+                            <label htmlFor="input_value">{t('retype_new_password')}</label>
                         </span>
                     </Col>
                 </Row>
 
                 <Row className="mt-4">
                     <Col>
-                        <Button onClick={savePassword}>Change password</Button>
+                        <Button onClick={savePassword}>{t('change_password')}</Button>
                     </Col>
                 </Row>
             </Container>
