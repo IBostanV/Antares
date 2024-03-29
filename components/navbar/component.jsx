@@ -50,8 +50,9 @@ function Navbar({ isLoggedIn }) {
     fetchLanguages()
         .then(result => setLanguages(result));
 
-    setLanguage(localStorage.getItem('lang')?.langId);
-  }, []);
+    const langId = localStorage.getItem('langId');
+    setLanguage(langId);
+  }, [isLoggedIn]);
 
   const handleLanguage = (event) => {
     const value = event.target.value;
@@ -62,7 +63,8 @@ function Navbar({ isLoggedIn }) {
     saveNewLanguage()
         .then((saved) => {
           if (saved) {
-            localStorage.setItem('lang', newLang);
+            localStorage.setItem('langCode', newLang.langCode);
+            localStorage.setItem('lang', newLang.langId);
             setLanguage(newLang.langId);
 
             i18n.changeLanguage(newLang.langCode)
