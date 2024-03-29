@@ -40,8 +40,10 @@ function Login({isLoggedIn}) {
       })
           .then((account) => {
             if (account) {
-              router.push('/')
-                  .then(() => localStorage.setItem('lang', account.data.language));
+              localStorage.setItem('langCode', account.data.language.langCode);
+              localStorage.setItem('langId', parseInt(account.data.language.langId));
+
+              router.push('/').then(() => null);
             }
           });
     }

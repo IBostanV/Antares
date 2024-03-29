@@ -17,12 +17,12 @@ function Application({
   const { i18n } = useTranslation();
 
     useEffect(() => {
-        const userLanguage = localStorage.getItem('lang');
+        const userLanguage = localStorage.getItem('langCode');
         if (userLanguage) {
-            i18n.changeLanguage(userLanguage.langCode)
+            i18n.changeLanguage(userLanguage)
                 .then(() => null);
         }
-    }, []);
+    }, [isLoggedIn]);
 
   return (
       <I18nextProvider i18n={_i18n_}>
