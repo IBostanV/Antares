@@ -1,12 +1,15 @@
 import React, {useEffect, useRef} from 'react';
-import { Button, Col, Container, Form, InputGroup, Row, } from 'react-bootstrap';
-import { useRouter } from 'next/router';
-import { authenticate } from '../../api/authentication';
-import { REGISTER_URL } from '../../api/constant';
-import { toast } from 'react-toastify';
+import {Button, Col, Container, Row,} from 'react-bootstrap';
+import {useRouter} from 'next/router';
+import {authenticate} from '../../api/authentication';
+import {REGISTER_URL} from '../../api/constant';
+import {toast} from 'react-toastify';
+import {InputText} from "primereact/inputtext";
+import {useTranslation} from "react-i18next";
 
 function Register({isLoggedIn}) {
   const router = useRouter();
+  const {t} = useTranslation();
 
   const email = useRef();
   const repass = useRef();
@@ -41,40 +44,28 @@ function Register({isLoggedIn}) {
             <h2 className="text-center">Register</h2>
           </Col>
         </Row>
-        <Row className="mt-4">
+        <Row className="mt-5">
           <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Email</InputGroup.Text>
-              <Form.Control
-                id="email"
-                ref={email}
-                type="email"
-              />
-            </InputGroup>
+            <span className="p-float-label">
+              <InputText type={'email'} ref={email} className="w-100"/>
+              <label>{t('email')}</label>
+            </span>
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-5">
           <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Password</InputGroup.Text>
-              <Form.Control
-                id="password"
-                ref={password}
-                type="password"
-              />
-            </InputGroup>
+            <span className="p-float-label">
+              <InputText type={'password'} autocomplete="new-password" ref={password} className="w-100"/>
+              <label>{t('password')}</label>
+            </span>
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-5">
           <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Password</InputGroup.Text>
-              <Form.Control
-                id="repass"
-                ref={repass}
-                type="password"
-              />
-            </InputGroup>
+            <span className="p-float-label">
+              <InputText type={'password'} autocomplete="new-password" ref={repass} className="w-100"/>
+              <label>{t('repass')}</label>
+            </span>
           </Col>
         </Row>
         <Row className="p-3">

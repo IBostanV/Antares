@@ -1,18 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { hasCookie } from 'cookies-next';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import {
-  Autoplay,
-  FreeMode,
-  Keyboard,
-  Mousewheel,
-  Navigation,
-  Pagination,
-  Scrollbar
-} from 'swiper/modules';
-import { getAllCategories } from '../api/category';
-import { useRouter } from 'next/router';
-import { Card } from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import {hasCookie} from 'cookies-next';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Autoplay, FreeMode, Keyboard, Mousewheel, Navigation, Pagination, Scrollbar} from 'swiper/modules';
+import {getAllCategories} from '../api/category';
+import {useRouter} from 'next/router';
+import {Card} from 'react-bootstrap';
 import base64Util from '../utils/base64Util';
 import {useTranslation} from "react-i18next";
 
@@ -23,15 +15,11 @@ function Home() {
 
   useEffect(() => {
     const fetchCategories = async () => await getAllCategories();
-    fetchCategories()
-      .then((result) => {
-        setCategories(result);
-      });
+    fetchCategories().then(setCategories);
   }, []);
 
   const selectCategory = (categoryId) => {
-    router.push(`/quiz/categorized/${categoryId}`)
-      .then(result => console.log(result));
+    router.push(`/quiz/categorized/${categoryId}`).then(console.log);
   };
 
   return (

@@ -1,13 +1,16 @@
-import React, { useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
-import { Button, Col, Container, Form, InputGroup, Row, } from 'react-bootstrap';
-import { LOGIN_URL } from '../../api/constant';
+import React, {useEffect, useRef} from 'react';
+import {useRouter} from 'next/router';
+import {Button, Col, Container, Row,} from 'react-bootstrap';
+import {LOGIN_URL} from '../../api/constant';
 import validateEmail from '../../utils/validation';
-import { authenticate } from '../../api/authentication';
-import { toast } from 'react-toastify';
+import {authenticate} from '../../api/authentication';
+import {toast} from 'react-toastify';
+import {InputText} from "primereact/inputtext";
+import {useTranslation} from "react-i18next";
 
 function Login({isLoggedIn}) {
   const router = useRouter();
+  const {t} = useTranslation();
 
   const email = useRef();
   const password = useRef();
@@ -57,28 +60,20 @@ function Login({isLoggedIn}) {
             <h2 className="text-center">Login</h2>
           </Col>
         </Row>
-        <Row className="mt-4">
+        <Row className="mt-5">
           <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Email</InputGroup.Text>
-              <Form.Control
-                id="email"
-                ref={email}
-                type="email"
-              />
-            </InputGroup>
+            <span className="p-float-label">
+              <InputText type={'email'} ref={email} className="w-100"/>
+              <label>{t('email')}</label>
+            </span>
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-5">
           <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Password</InputGroup.Text>
-              <Form.Control
-                id="password"
-                ref={password}
-                type="password"
-              />
-            </InputGroup>
+            <span className="p-float-label">
+              <InputText type={'password'} ref={password} className="w-100"/>
+              <label>{t('password')}</label>
+            </span>
           </Col>
         </Row>
         <Row className="p-3">

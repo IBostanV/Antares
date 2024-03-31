@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { logout } from '../../api/authentication';
-import { NavbarItem } from './NavbarItem';
+import {useRouter} from 'next/router';
+import {logout} from '../../api/authentication';
+import {NavbarItem} from './NavbarItem';
 import {useTranslation} from "react-i18next";
-import {Col} from "react-bootstrap";
-import {Dropdown} from "primereact/dropdown";
 import getLanguages from "../../api/question/get-languages";
 import saveUserLanguage from "../../api/profile/save-language";
 import {toast} from "react-toastify";
+import {SecureComponent} from "../security";
+import {FlexContainer} from "../common/FlexContainer";
 
 const LinkButtonGroup = ({ links }) => {
   const {t} = useTranslation();
@@ -25,13 +25,13 @@ const LinkButtonGroup = ({ links }) => {
   }
 
   return (
-    <div className="d-flex">
+    <FlexContainer>
       {links.map((link) => link.href ? (
         <Link key={link.href} href={link.href}>
           {getButton(link)}
         </Link>
       ) : (getButton(link)))}
-    </div>
+    </FlexContainer>
   );
 };
 
@@ -47,8 +47,7 @@ function Navbar({ isLoggedIn }) {
 
   useEffect(() => {
     const fetchLanguages = async () => await getLanguages();
-    fetchLanguages()
-        .then(result => setLanguages(result));
+    fetchLanguages().then(setLanguages);
 
     const langId = localStorage.getItem('langId');
     setLanguage(langId);
@@ -64,7 +63,7 @@ function Navbar({ isLoggedIn }) {
         .then((saved) => {
           if (saved) {
             localStorage.setItem('langCode', newLang.langCode);
-            localStorage.setItem('lang', newLang.langId);
+            localStorage.setItem('langId', newLang.langId);
             setLanguage(newLang.langId);
 
             i18n.changeLanguage(newLang.langCode)
@@ -122,19 +121,32 @@ function Navbar({ isLoggedIn }) {
     }
   ];
 
-  const changeLang = () =>
+  const changeLang =
       <select className={'lang-select mx-3'} onChange={handleLanguage} value={language}>
         {languages?.map(lang =>
             <option key={lang.langId} value={lang.langId}>{lang.langCode}</option>
         )}
       </select>
 
+  const notLoggedInRender =
+      <FlexContainer>
+        {changeLang}
+        <LinkButtonGroup links={unauthenticatedLinks}/>
+      </FlexContainer>;
+
   return (
       <div className="header">
         <LinkButtonGroup links={commonLinks}/>
-        {isLoggedIn
-            ? (<div className={'d-flex'}>{changeLang()}<LinkButtonGroup links={authenticatedLinks}/></div>)
-            : (<div className={'d-flex'}>{changeLang()}<LinkButtonGroup links={unauthenticatedLinks}/></div>)}
+        <SecureComponent
+            roles={['ROLE_USER']}
+            isAuthenticated={isLoggedIn}
+            defaultRender={notLoggedInRender}
+        >
+          <FlexContainer>
+            {changeLang}
+            <LinkButtonGroup links={authenticatedLinks}/>
+          </FlexContainer>
+        </SecureComponent>
       </div>
   );
 }
