@@ -7,6 +7,7 @@ import moment from 'moment';
 import getQuestionWithOptions from '../../../api/question/get-with-options';
 import { Knob } from 'primereact/knob';
 import base64Util from '../../../utils/base64Util';
+import {FlexContainer} from "../../../components/common/FlexContainer";
 
 function ExpressQuiz() {
   const router = useRouter();
@@ -112,10 +113,9 @@ function ExpressQuiz() {
       />
       <div className="d-flex justify-content-center align-items-center h-100 flex-column">
         <h1 className="text-center">{currentQuestion?.content}</h1>
-        <div className="d-flex">
+        <FlexContainer>
           {currentQuestion?.answers?.map(answer => (
-            <div key={answer.content}
-                 className="d-flex align-items-center flex-column justify-content-center">
+            <div key={answer.content} className="d-flex align-items-center flex-column justify-content-center">
               <Image
                 fluid
                 rounded
@@ -132,7 +132,7 @@ function ExpressQuiz() {
               </Button>
             </div>
           ))}
-        </div>
+        </FlexContainer>
       </div>
     </div>
   );

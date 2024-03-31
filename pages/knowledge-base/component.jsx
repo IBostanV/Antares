@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getRepositoryRecords } from '../../api/knowledge-base';
 import { Card } from 'react-bootstrap';
 import base64Util from '../../utils/base64Util';
+import {FlexContainer} from "../../components/common/FlexContainer";
 
 const KnowledgeBase = () => {
   const searchBox = useRef();
@@ -21,7 +22,7 @@ const KnowledgeBase = () => {
           <input type="text" ref={searchBox}/>
         </label>
       </div>
-      <div className="d-flex">
+      <FlexContainer>
         {repositoryRecords?.map(record => (
           <Card className='col-2 m-5' key={record.id}>
             <Card.Img variant="top" src={base64Util(record.attachment)} />
@@ -31,7 +32,7 @@ const KnowledgeBase = () => {
             </Card.Body>
           </Card>
         ))}
-      </div>
+      </FlexContainer>
     </div>
   );
 };

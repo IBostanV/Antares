@@ -1,113 +1,63 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Button, Col, Container, Image, Row} from 'react-bootstrap';
 import {Calendar} from 'primereact/calendar';
 import {MultiSelect} from 'primereact/multiselect';
-import {getAllCategoriesShort} from '../../api/category';
 import {InputText} from 'primereact/inputtext';
-import {getOccupations, saveProfileInfo} from '../../api/profile';
+import {saveProfileInfo} from '../../api/profile';
 import {toast} from 'react-toastify';
 import {changePassword, verifyOldPassword} from '../../api/authentication';
 import {CHANGE_PASSWORD_URL} from '../../api/constant';
 import {useRouter} from 'next/router';
-import {getCurrentUser} from '../../api/user';
-import base64Util from '../../utils/base64Util';
 import moment from 'moment';
 import {setWIthPreview} from '../../utils/fileUtils';
 import {useTranslation} from "react-i18next";
+import {FlexContainer} from "../../components/common/FlexContainer";
+import {useProfile, useProfileSecurity} from "./hooks";
+
+type ValueChangeType = (arg: any) => void;
 
 function Profile() {
     const router = useRouter();
-    const { t, i18n} = useTranslation();
+    const { t} = useTranslation();
 
-    const [user, setUser] = useState({});
+    const {
+        categories,
+        userOccupations,
+        avatar, setAvatar,
+        user, setUser,
+        previewAvatar, setPreviewAvatar,
+    } = useProfile();
 
-    const [avatar, setAvatar] = useState(null);
-    const [previewAvatar, setPreviewAvatar] = useState(null);
+    const {
+        password, setPassword,
+        oldPassword, setOldPassword,
+        repeatPassword, setRepeatPassword,
+        passwordMatches, setPasswordMatches
+    } = useProfileSecurity();
 
-    const [password, setPassword] = useState('');
-    const [repeatPassword, setRepeatPassword] = useState('');
-    const [oldPassword, setOldPassword] = useState('');
-    const [passwordMatches, setPasswordMatches] = useState(null);
-
-    const [userOccupations, setUserOccupations] = useState([]);
-    const [categories, setCategories] = useState([]);
-
-    const handleName = (event) => setUser(values => ({
-        ...values,
-        name: event.target.value
-    }));
-    const handleBirthday = (event) => setUser(values => ({
-        ...values,
-        birthday: event.target.value
-    }));
-    const handleEmail = (event) => setUser(values => ({
-        ...values,
-        email: event.target.value
-    }));
-    const handleTheme = (event) => setUser(values => ({
-        ...values,
-        theme: event.target.value
-    }));
-    const handleUserOccupation = (event) => setUser(values => ({
-        ...values,
-        occupations: event.value
-    }));
-    const handleSurname = (event) => setUser(values => ({
-        ...values,
-        surname: event.target.value
-    }));
-    const handleUsername = (event) => setUser(values => ({
-        ...values,
-        username: event.target.value
-    }));
-    const handleFavCategories = (event) => {
+    const handleChange = (event, field: string) =>
         setUser(values => ({
             ...values,
-            favoriteCategories: event.value
+            [field]: event.value
         }));
-    }
 
-    const handlePassword = (event) => setPassword(event.target.value);
-    const handleOldPassword = (event) => setOldPassword(event.target.value);
-    const handleRepeatPassword = (event) => setRepeatPassword(event.target.value);
+    const handleTargetChange = (event, field: string) =>
+        setUser(values => ({
+            ...values,
+            [field]: event.target.value
+        }));
 
-    useEffect(() => {
-        const fetchUser = async () => await getCurrentUser();
-        fetchUser()
-            .then((response) => {
-                const {
-                    birthday = [2000, 1, 1],
-                    avatar
-                } = response ?? {};
-
-                setUser({
-                    ...response,
-                    birthday: new Date(birthday[0], birthday[1] - 1, birthday[2])
-                });
-                setPreviewAvatar(avatar && base64Util(avatar));
-            });
-    }, []);
-
-    useEffect(() => {
-        const fetchCategories = async () => await getAllCategoriesShort();
-        fetchCategories()
-            .then(result => setCategories(result));
-
-        const fetchOccupations = async () => await getOccupations();
-        fetchOccupations()
-            .then(result => setUserOccupations(result));
-    }, []);
+    const handleFunctionChange = (event, setValue: ValueChangeType) =>
+        setValue(event.target.value);
 
     const saveProfile = async () => {
         const birthday = moment(user.birthday).format('YYYY-MM-DD');
+        const infoSaved = await saveProfileInfo(
+            {...user, isEnabled: user.enabled, birthday},
+            avatar
+        );
 
-        const response = await saveProfileInfo(({
-            ...user,
-            isEnabled: user.enabled,
-            birthday
-        }), avatar);
-
-        if (response) {
+        if (infoSaved) {
             toast.success(t('saved'));
         }
     };
@@ -144,7 +94,7 @@ function Profile() {
     };
 
     return (
-        <div className="d-flex">
+        <FlexContainer>
             <Container>
                 <h3>{t('user')}</h3>
                 <Row className="mt-4">
@@ -152,7 +102,7 @@ function Profile() {
                         <span className="p-float-label">
                             <InputText
                                 value={user.username}
-                                onChange={handleUsername}
+                                onChange={(event) => handleTargetChange(event, 'username')}
                                 className="w-100"/>
                             <label htmlFor="input_value">{t('username')}</label>
                         </span>
@@ -165,7 +115,7 @@ function Profile() {
                             <InputText
                                 readOnly
                                 value={user.email}
-                                onChange={handleEmail}
+                                onChange={(event) => handleTargetChange(event, 'email')}
                                 className="w-100"
                             />
                             <label htmlFor="input_value">{t('email')}</label>
@@ -178,7 +128,7 @@ function Profile() {
                         <span className="p-float-label">
                             <InputText
                                 value={user.name}
-                                onChange={handleName}
+                                onChange={(event) => handleTargetChange(event, 'name')}
                                 className="w-100"/>
                             <label htmlFor="input_value">{t('name')}</label>
                         </span>
@@ -190,7 +140,7 @@ function Profile() {
                         <span className="p-float-label">
                             <InputText
                                 value={user.surname}
-                                onChange={handleSurname}
+                                onChange={(event) => handleTargetChange(event, 'surname')}
                                 className="w-100"/>
                             <label htmlFor="input_value">{t('surname')}</label>
                         </span>
@@ -202,7 +152,7 @@ function Profile() {
                         <span className="p-float-label">
                             <InputText
                                 value={user.theme}
-                                onChange={handleTheme}
+                                onChange={(event) => handleTargetChange(event, 'theme')}
                                 className="w-100"/>
                             <label htmlFor="input_value">Theme</label>
                         </span>
@@ -215,7 +165,7 @@ function Profile() {
                             <MultiSelect
                                 filter
                                 value={user.occupations}
-                                onChange={handleUserOccupation}
+                                onChange={(event) => handleChange(event, 'occupations')}
                                 options={userOccupations}
                                 optionLabel="name"
                                 virtualScrollerOptions={{itemSize: 40}}
@@ -233,7 +183,7 @@ function Profile() {
                                     className="w-100"
                                     value={user.birthday}
                                     dateFormat="yy-mm-dd"
-                                    onChange={handleBirthday}
+                                    onChange={(event) => handleTargetChange(event, 'birthday')}
                                 />
                             <label htmlFor="input_value">{t('birthday')}</label>
                         </span>
@@ -244,7 +194,7 @@ function Profile() {
                             <MultiSelect
                                 filter
                                 value={user.favoriteCategories}
-                                onChange={handleFavCategories}
+                                onChange={(event) => handleChange(event, 'favoriteCategories')}
                                 options={categories}
                                 optionLabel="name"
                                 virtualScrollerOptions={{itemSize: 40}}
@@ -283,7 +233,7 @@ function Profile() {
                             <InputText
                                 type="password"
                                 value={oldPassword}
-                                onChange={handleOldPassword}
+                                onChange={(event) => handleFunctionChange(event, setOldPassword)}
                                 onBlur={checkOldPassword}
                                 className={passwordMatches === null || passwordMatches ? 'w-100' : 'w-100 p-invalid'}
                             />
@@ -298,7 +248,7 @@ function Profile() {
                             <InputText
                                 type="password"
                                 value={password}
-                                onChange={handlePassword}
+                                onChange={(event) => handleFunctionChange(event, setPassword)}
                                 className="w-100"/>
                             <label htmlFor="input_value">{t('new_password')}</label>
                         </span>
@@ -311,7 +261,7 @@ function Profile() {
                             <InputText
                                 type="password"
                                 value={repeatPassword}
-                                onChange={handleRepeatPassword}
+                                onChange={(event) => handleFunctionChange(event, setRepeatPassword)}
                                 className="w-100"/>
                             <label htmlFor="input_value">{t('retype_new_password')}</label>
                         </span>
@@ -324,7 +274,7 @@ function Profile() {
                     </Col>
                 </Row>
             </Container>
-        </div>
+        </FlexContainer>
     );
 }
 
