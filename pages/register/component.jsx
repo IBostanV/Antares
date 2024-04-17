@@ -17,7 +17,7 @@ function Register({isLoggedIn}) {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/");
+      router.push("/home");
     }
   }, [isLoggedIn]);
 
@@ -30,7 +30,7 @@ function Register({isLoggedIn}) {
         .then((response) => {
           if (response) {
             toast.success('Your account has been successfully created.');
-            router.push('/');
+            router.push('/home');
           }
         });
     }

@@ -10,6 +10,7 @@ import saveUserLanguage from "../../api/profile/save-language";
 import {toast} from "react-toastify";
 import {SecureComponent} from "../security";
 import {FlexContainer} from "../common/FlexContainer";
+import {Image} from "react-bootstrap";
 
 const LinkButtonGroup = ({ links }) => {
   const {t} = useTranslation();
@@ -24,11 +25,21 @@ const LinkButtonGroup = ({ links }) => {
     );
   }
 
+  function getImage(link) {
+    return (
+        <NavbarItem key={link.href || link.text}>
+          <button onClick={link.onClick}>
+            <Image width={100} src={link} fluid/>
+          </button>
+        </NavbarItem>
+    );
+  }
+
   return (
     <FlexContainer>
       {links.map((link) => link.href ? (
         <Link key={link.href} href={link.href}>
-          {getButton(link)}
+          {link.image ? getImage(link.image) : getButton(link)}
         </Link>
       ) : (getButton(link)))}
     </FlexContainer>
@@ -43,7 +54,7 @@ function Navbar({ isLoggedIn }) {
   const [language, setLanguage] = useState(1);
 
   const signOut = () => logout()
-      .then(() => router.push('/'));
+      .then(() => router.push('/home'));
 
   useEffect(() => {
     const fetchLanguages = async () => await getLanguages();
@@ -74,8 +85,8 @@ function Navbar({ isLoggedIn }) {
 
   const commonLinks = [
     {
-      href: '/',
-      text: 'home'
+      href: '/home',
+      image: '/resources/pq-white-logo.png'
     },
     {
       href: '/quiz/categorized',

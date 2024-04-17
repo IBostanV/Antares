@@ -47,18 +47,18 @@ const Category = ({
         <h4 className={'text-center'}>Categories</h4>
         <hr/>
         <Table striped bordered variant="dark">
-          <thead>
-          <tr>
-            <th className="col-4">Name</th>
-            <th className="col-3">Parent</th>
-            <th className="col-3">Attachment</th>
-            <th className="text-center col-2">Visible</th>
-          </tr>
-          </thead>
-          <tbody>
-          {categories?.map(item => (
-            <tr key={item.catId}>
-              <td>{item.name}</td>
+              <thead>
+              <tr>
+                <th className="col-4">Name</th>
+                <th className="col-3">Parent</th>
+                <th className="col-3">Attachment</th>
+                <th className="text-center col-2">Visible</th>
+              </tr>
+              </thead>
+              <tbody>
+              {categories?.map(item => (
+                  <tr key={item.catId}>
+                    <td>{item.name}</td>
               <td>{item.parentName}</td>
               <td>
                 {item.attachment && (
