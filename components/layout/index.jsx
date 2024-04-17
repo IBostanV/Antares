@@ -9,6 +9,7 @@ function Layout({ children, isLoggedIn }) {
         <>
             <Head>
                 <title>Play Quiz</title>
+                <link rel="icon" href="/resources/favicon.png"/>
             </Head>
 
             <div className="d-flex flex-column background">

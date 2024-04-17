@@ -17,7 +17,7 @@ function Login({isLoggedIn}) {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push('/');
+      router.push('/home');
     }
   }, [isLoggedIn]);
 
@@ -45,8 +45,9 @@ function Login({isLoggedIn}) {
             if (account) {
               localStorage.setItem('langCode', account.data.language.langCode);
               localStorage.setItem('langId', parseInt(account.data.language.langId));
+              localStorage.setItem('userId', parseInt(account.data.id));
 
-              router.push('/').then(() => null);
+              router.push('/home').then(() => null);
             }
           });
     }

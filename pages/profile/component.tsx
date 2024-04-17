@@ -101,10 +101,12 @@ function Profile() {
                     <Col>
                         <span className="p-float-label">
                             <InputText
-                                value={user.username}
-                                onChange={(event) => handleTargetChange(event, 'username')}
-                                className="w-100"/>
-                            <label htmlFor="input_value">{t('username')}</label>
+                                readOnly
+                                value={user.email}
+                                onChange={(event) => handleTargetChange(event, 'email')}
+                                className="w-100"
+                            />
+                            <label htmlFor="input_value">{t('email')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -113,12 +115,10 @@ function Profile() {
                     <Col>
                         <span className="p-float-label">
                             <InputText
-                                readOnly
-                                value={user.email}
-                                onChange={(event) => handleTargetChange(event, 'email')}
-                                className="w-100"
-                            />
-                            <label htmlFor="input_value">{t('email')}</label>
+                                value={user.username}
+                                onChange={(event) => handleTargetChange(event, 'username')}
+                                className="w-100"/>
+                            <label htmlFor="input_value">{t('username')}</label>
                         </span>
                     </Col>
                 </Row>
@@ -232,6 +232,7 @@ function Profile() {
                         <span className="p-float-label">
                             <InputText
                                 type="password"
+                                autoComplete='new-password'
                                 value={oldPassword}
                                 onChange={(event) => handleFunctionChange(event, setOldPassword)}
                                 onBlur={checkOldPassword}
